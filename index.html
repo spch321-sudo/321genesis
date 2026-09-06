@@ -25,6 +25,7 @@
   --hl-maroon:#EBD0D0; --hl-brown:#E9D9BF; --hl-charcoal:#DBDAD4;
   --hb-green:#5E9E63; --hb-blue:#5583C7; --hb-pink:#DB7A90; --hb-purple:#9377C0;
   --hb-maroon:#8C4A4E; --hb-brown:#8A6740; --hb-charcoal:#54534E;
+  --hl-now:#FFE9A8;
   --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
   --serif:"Noto Serif TC","Source Han Serif TC","Songti TC",serif;
   --mono:"SF Mono",ui-monospace,Menlo,monospace;
@@ -37,6 +38,7 @@ html[data-dark="1"]{
   --hl-maroon:#3D2525; --hl-brown:#3B3020; --hl-charcoal:#34342F;
   --hb-green:#7BC28C; --hb-blue:#7FA0DE; --hb-pink:#E58FA0; --hb-purple:#A48AC9;
   --hb-maroon:#C08084; --hb-brown:#B99168; --hb-charcoal:#8E8D86;
+  --hl-now:#4A3C16;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0}
@@ -341,6 +343,13 @@ mark{background:rgba(156,107,24,.3);color:inherit;padding:0 2px;border-radius:3p
 .mks.hl[data-c="maroon"]{background:linear-gradient(transparent 60%, var(--hl-maroon) 60%)}
 .mks.hl[data-c="brown"]{background:linear-gradient(transparent 60%, var(--hl-brown) 60%)}
 .mks.hl[data-c="charcoal"]{background:linear-gradient(transparent 60%, var(--hl-charcoal) 60%)}
+/* 正在朗讀的那一句 */
+.spk-now{
+  background:var(--hl-now)!important;border-radius:4px;
+  box-shadow:0 0 0 3px var(--hl-now);transition:background .2s
+}
+.les h4 .spk-now,.les details.deeper.spk-now{box-shadow:none}
+.les details.deeper.spk-now{background:var(--hl-now)!important}
 .mkp{cursor:pointer;border-radius:5px;transition:background .12s}
 .mkp.hl{background:linear-gradient(transparent 62%, var(--hl-gold) 62%)}
 .mkp.hl[data-c="green"]{background:linear-gradient(transparent 62%, var(--hl-green) 62%)}
@@ -371,6 +380,8 @@ mark{background:rgba(156,107,24,.3);color:inherit;padding:0 2px;border-radius:3p
   box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)
 }
 .hlsw.on{border-color:var(--ink)}
+.mkask.del{color:var(--clay);border-color:var(--clay)}
+.btn.danger{color:var(--clay);border-color:var(--clay)}
 .mkask{
   display:inline-block;margin-left:8px;border:1px solid var(--line);background:var(--card);
   color:var(--pine);border-radius:8px;padding:3px 9px;font:inherit;font-size:12.5px;cursor:pointer
@@ -403,6 +414,7 @@ mark{background:rgba(156,107,24,.3);color:inherit;padding:0 2px;border-radius:3p
   border:0;background:rgba(255,255,255,.16);color:inherit;width:30px;height:30px;
   border-radius:50%;font-size:13px;cursor:pointer;flex:0 0 auto
 }
+.spkbar button.on{background:var(--brass);color:#fff}
 
 /* ── 小智 ── */
 .xzfab{
@@ -896,7 +908,8 @@ function vText(){
         onclick="event.stopPropagation();mkTap('${mk}',this)">${sv}</span>`;
       if (on && mkNote(mk)) notes += `<div class="mknote"${c ? ` data-c="${c}"` : ''} style="margin-left:29px">
         <b>領受</b>　${esc(mkNote(mk))}
-        <button class="mkask" onclick="askXz(mkText('${mk}'),'領受：${escA(mkNote(mk))}')">✨ 問小智</button></div>`;
+        <button class="mkask" onclick="askXz(mkText('${mk}'),'領受：${escA(mkNote(mk))}')">✨ 問小智</button>
+        <button class="mkask del" onclick="mkDrop('${mk}')">🗑 刪除</button></div>`;
     });
     h += `<div class="${cls}" data-v="${ref}">
       <span class="vn" ${b ? `onclick="openV('${ref}')"` : ''}>${vn}</span>
@@ -985,7 +998,8 @@ function cCard(n, m){
       const k = 'c|' + n + ':0|card|' + i, on = mkHas(k), c = mkColor(k);
       return `<p class="mkp${on ? ' hl' : ''}"${c ? ` data-c="${c}"` : ''} data-k="${k}"
         style="margin:0 0 10px" onclick="mkTap('${k}',this)">· ${esc(x)}</p>`
-        + (on && mkNote(k) ? `<div class="mknote"${c ? ` data-c="${c}"` : ''}><b>領受</b>　${esc(mkNote(k))}</div>` : '');
+        + (on && mkNote(k) ? `<div class="mknote"${c ? ` data-c="${c}"` : ''}><b>領受</b>　${esc(mkNote(k))}
+             <button class="mkask del" onclick="event.stopPropagation();mkDrop('${k}')">🗑 刪除</button></div>` : '');
     }).join('')}</div>
   <div class="card" style="background:var(--pine);color:#fff;border:0">
     <p class="eyebrow" style="color:#fff;opacity:.8">本章金句</p>
@@ -1085,14 +1099,14 @@ function cLesson(n, m){
   <div class="mkhint">💡 <b>點一下任何一句</b>畫線，<b>再點一下</b>換顏色（七色）、寫下領受或問小智。</div>
   <div class="les" id="les${n}">${L.blocks.map((b, i) => {
     switch (b[0]){
-      case 'h': return `<h4 id="ls${n}_${i}">${esc(b[1])}</h4>`;
-      case 'd': return `<details class="deeper"><summary>想更深？${esc(b[1][0])}</summary>
+      case 'h': return `<h4 id="ls${n}_${i}"><span id="lb${n}_${i}">${esc(b[1])}</span></h4>`;
+      case 'd': return `<details class="deeper" id="lb${n}_${i}"><summary>想更深？${esc(b[1][0])}</summary>
                         <div class="deeper-a mkw"><p>${lesSents(n, i, 'a', b[1][1])}</p></div></details>`;
-      case 's': return `<p class="t3s mkw">◆　${lesSents(n, i, 't', b[1])}</p>`;
-      case 't': return `<p class="t3t mkw">▸ ${lesSents(n, i, 't', b[1])}</p>`;
-      case 'm': return `<p class="t3m mkw">💡 ${lesSents(n, i, 't', b[1])}</p>`;
-      case 'n': return `<p class="t3n mkw">${lesSents(n, i, 't', b[1])}</p>`;
-      default:  return `<p class="mkw${b[1].startsWith('我宣告，') ? ' dec' : ''}">${lesSents(n, i, 't', b[1])}</p>`;
+      case 's': return `<p class="t3s mkw" id="lb${n}_${i}">◆　${lesSents(n, i, 't', b[1])}</p>`;
+      case 't': return `<p class="t3t mkw" id="lb${n}_${i}">▸ ${lesSents(n, i, 't', b[1])}</p>`;
+      case 'm': return `<p class="t3m mkw" id="lb${n}_${i}">💡 ${lesSents(n, i, 't', b[1])}</p>`;
+      case 'n': return `<p class="t3n mkw" id="lb${n}_${i}">${lesSents(n, i, 't', b[1])}</p>`;
+      default:  return `<p class="mkw${b[1].startsWith('我宣告，') ? ' dec' : ''}" id="lb${n}_${i}">${lesSents(n, i, 't', b[1])}</p>`;
     }
   }).join('')}</div>
   <div class="card"><p class="eyebrow">這一課的筆記</p>
@@ -1116,68 +1130,101 @@ const DEEP_LEAD = [
   '讓我們把這一段再往裡走一步。有人問，',
 ];
 const DEEP_ANS = ['我的回答是這樣。', '我是這樣看的。', '我們可以這樣想。', '這一題我會這樣回答。'];
-function lesSpeakText(n){
+/* 把純文字切成句子（與畫面上的 .mks 完全同一套規則，這樣才對得起來）*/
+const plainSents = s => splitHTML(esc(s)).map(x =>
+  x.replace(/<[^>]+>/g, '').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&'));
+
+/* 朗讀單位：一句一個，並且記著它在畫面上是哪一塊的第幾句
+   { t:要念的字, i:區塊序號, part:'t'|'a', j:句序（-1 表示整塊） }  */
+function lesSpeakUnits(n){
   const L = (D.lesson || {})[n];
-  if (!L) return '';
+  if (!L) return [];
   const out = [];
   let di = 0, qi = 0;
-  L.blocks.forEach(b => {
+  const push = (t, i, part, j) => { if (String(t).trim()) out.push({ t:String(t), i, part, j }); };
+  /* 一整塊：第一句套用口語的帶入詞，其餘照念，句序與畫面對得起來 */
+  const block = (raw, i, part, lead, drop) => {
+    const ss = plainSents(raw);
+    ss.forEach((s, j) => {
+      let x = s;
+      if (j === 0){ if (drop) x = x.replace(drop, ''); x = (lead || '') + x; }
+      push(x, i, part, j);
+    });
+  };
+  L.blocks.forEach((b, i) => {
     const t = b[1];
     switch (b[0]){
       case 'h': {                                   // 一、xxx → 第一段，xxx。
         const p = String(t).split('、');
-        out.push(p.length > 1 ? `第${p[0]}段，${p.slice(1).join('、')}。` : String(t) + '。');
+        push(p.length > 1 ? `第${p[0]}段，${p.slice(1).join('、')}。` : String(t) + '。', i, 't', -1);
         break;
       }
       case 'd':                                     // 想更深：一問一答
-        out.push(DEEP_LEAD[di % DEEP_LEAD.length] + t[0]);
-        out.push(DEEP_ANS[di % DEEP_ANS.length] + t[1]);
+        push(DEEP_LEAD[di % DEEP_LEAD.length] + t[0], i, 'q', -1);
+        block(t[1], i, 'a', DEEP_ANS[di % DEEP_ANS.length]);
         di++;
         break;
       case 's': {                                   // 三個化的段標（括號裡的分鐘數不念）
         const s = String(t).replace(/（[^）]*）/g, '').replace(/｜/g, '，').trim();
-        out.push(/^收尾/.test(s) ? '我們來收尾。' : `接下來是${s}。`);
+        push(/^收尾/.test(s) ? '我們來收尾。' : `接下來是${s}。`, i, 't', 0);
         break;
       }
       case 't': {                                   // 【看】【聽】【想】【講】【行】
         const m = String(t).match(/^【(.+?)】(.*)$/);
-        out.push(m ? `這一步是「${m[1]}」，${m[2]}。` : String(t) + '。');
+        push(m ? `這一步是「${m[1]}」，${m[2]}。` : String(t) + '。', i, 't', 0);
         break;
       }
       case 'm':                                     // 帶領說明／提醒：本身已自帶稱謂
         if (/優先順序標示/.test(t)) break;           // 星號是印在紙上的記號，念出來沒有意義
-        out.push(String(t));
+        block(t, i, 't');
         break;
       case 'n': {                                   // 1. ★★★ 題目 → 第一題。題目
-        const m = String(t).match(/^(\d+)\.\s*(★+)?\s*([\s\S]*)$/);
+        const m = String(t).match(/^(\d+)\./);
         qi = m ? +m[1] : qi + 1;
-        let q = String(m ? m[3] : t).replace(/^【必做】/, '');
-        out.push(`第${cnNum(qi)}題。${m && /【必做】/.test(m[3]) ? '這一題必做。' : ''}${q}`);
+        const must = /【必做】/.test(String(t));
+        block(t, i, 't', `第${cnNum(qi)}題。${must ? '這一題必做。' : ''}`, /^\d+\.\s*(★+)?\s*(【必做】)?\s*/);
         break;
       }
       default:
-        out.push(String(t));
+        block(t, i, 't');
     }
   });
-  return out.join('\n');
+  return out;
 }
+/* 把單位併成「一次抓一段語音」的段落：同一塊之內合併到 60 字以上再切，
+   太碎會一直等網路，太大又會遲遲不開口。每一段記著它涵蓋畫面上的哪幾句。 */
+function lesSegs(n){
+  const us = lesSpeakUnits(n), segs = [];
+  us.forEach(u => {
+    const last = segs[segs.length - 1];
+    if (last && last.i === u.i && last.part === u.part && last.j0 >= 0 && u.j >= 0
+        && last.t.length < 60 && last.t.length + u.t.length <= 240){
+      last.t += u.t; last.js.push(u.j);
+    } else {
+      segs.push({ t:u.t, i:u.i, part:u.part, j0:u.j, js:u.j >= 0 ? [u.j] : [] });
+    }
+  });
+  segs.forEach(s => { s.t = sanitize(s.t); });
+  return segs.filter(s => s.t);
+}
+const lesSpeakText = n => lesSpeakUnits(n).map(u => u.t).join('\n');
 function lesTitle(n){
   const L = (D.lesson || {})[n];
   return L ? `第${cnNum(n)}課　${String(L.title).split('——')[0]}` : '講義';
 }
 function lesSpeak(n){
   if (SPK.on) return stopSpeak();
-  const t = lesSpeakText(n);
-  if (!t) return toast('本章尚未收錄教學講義');
-  speak(t, lesTitle(n));
+  const segs = lesSegs(n);
+  if (!segs.length) return toast('本章尚未收錄教學講義');
+  playSegs(segs, lesTitle(n), n);
 }
 /* 預先下載：把整課的語音抓進 IndexedDB，之後離線也能聽 */
 async function lesDownload(n){
-  const t = lesSpeakText(n);
-  if (!t) return toast('本章尚未收錄教學講義');
+  const segs = lesSegs(n);
+  if (!segs.length) return toast('本章尚未收錄教學講義');
   if (!S.set.human) return toast('目前用的是裝置語音，不需要下載');
   const b = $('#lesDl' + n);
-  const chunks = ttsChunks(t);
+  const chunks = segs.map(s => s.t);
   let done = 0, fail = 0;
   const paint = () => { if (b) b.textContent = `⤓ 下載中 ${done}/${chunks.length}`; };
   paint();
@@ -1203,8 +1250,8 @@ async function lesDownload(n){
 function lesDlCheck(n){
   const b = $('#lesDl' + n);
   if (!b || !S.set.human) return;
-  const t = lesSpeakText(n); if (!t) return;
-  const keys = ttsChunks(t).map(p => voiceName() + '|' + rateAttr() + '|' + p);
+  const segs = lesSegs(n); if (!segs.length) return;
+  const keys = segs.map(s => voiceName() + '|' + rateAttr() + '|' + s.t);
   ttsCount(keys, got => {
     const el = $('#lesDl' + n); if (!el) return;
     el.textContent = got >= keys.length ? '✓ 已下載'
@@ -1440,6 +1487,7 @@ S.set.voice = S.set.voice || 'yunfan';
 S.set.rate  = S.set.rate  || 0;      // -3 ~ +3
 S.set.human = (S.set.human === undefined) ? 1 : S.set.human;
 S.set.hlc  = S.set.hlc  || '';       // 上一次選的畫線顏色
+S.set.follow = (S.set.follow === undefined) ? 1 : S.set.follow;   // 朗讀時自動捲動
 S.mk = S.mk || {};
 S.xz = S.xz || [];                    // 小智收藏                    // 畫線與領受
 
@@ -1512,10 +1560,33 @@ async function ttsClear(){
 const voiceName = () => (TTS_VOICES[S.set.voice] || TTS_VOICES.yunfan).name;
 const rateAttr  = () => (S.set.rate >= 0 ? '+' : '') + (S.set.rate * 5) + '%';
 
+/* 原文（希伯來文／希臘文）中文語音念不出來。
+   後面若跟著括號裡的拼音，就只念那個拼音；沒有拼音就整段略過——只念一遍，不重複。 */
+const ORIG_CH  = '\\u0590-\\u05FF\\u0370-\\u03FF\\u1F00-\\u1FFF';
+const ORIG_RUN = '[' + ORIG_CH + '][' + ORIG_CH + "\\s'\u2019\\-\u05be\u05f3\u05f4\u00b7]*";
+const RE_ORIG_ROMAN = new RegExp(ORIG_RUN + "\\s*[（(]\\s*([A-Za-z][A-Za-z'\u2019\u0101\u0113\u012b\u014d\u016b\\- ]*)\\s*[）)]", 'g');
+const RE_ORIG_RUN   = new RegExp(ORIG_RUN, 'g');
+
+/* 讀音修正：只改送去語音的字，畫面上的字完全不動。
+   「地」在天地、地球、地是……應讀 ㄉㄧˋ，語音引擎常誤讀成輕聲的 ㄉㄜ˙；
+   換成同音的「帝」就讀得對（聽起來一模一樣）。要再加字就往這張表加。 */
+const TTS_SAY = [
+  [/天地/g, '天帝'],
+  [/地球/g, '帝球'],
+  [/地是/g, '帝是'],
+];
+
 /* 朗讀前的文字整理 */
 function sanitize(t){
   t = String(t || '').replace(/<[^>]+>/g, ' ');
   t = t.replace(/&nbsp;/g, ' ').replace(/&amp;/g, '和').replace(/&lt;|&gt;/g, ' ');
+  // 原文只念一遍：有拼音就只念拼音，沒有拼音就整段略過
+  t = t.replace(RE_ORIG_ROMAN, ' $1 ').replace(RE_ORIG_RUN, '\u0000');
+  // 略過原文之後，把「……原文是。」這種懸在半空的接續詞一起收乾淨
+  t = t.replace(/[（(]\s*\u0000\s*[）)]/g, '\u0000');
+  t = t.replace(/[是叫作為的]?\s*\u0000\s*(?=[，。；、！？])/g, '');
+  t = t.replace(/\s*\u0000\s*/g, ' ');
+  t = t.replace(/[（(]\s*[）)]/g, ' ');
   t = t.replace(/\*\*/g, '').replace(/[《》「」『』【】]/g, '');
   t = t.replace(/^[ \t]*#{1,6}[ \t]*/gm, '').replace(/^[ \t]*>[ \t]?/gm, '');
   t = t.replace(/★|⚠|✓|❌|🟢|🟡|🔴|📋|📖|⚖|▸|▾|·/g, ' ');
@@ -1524,8 +1595,8 @@ function sanitize(t){
     cnNum(a) + '章' + cnNum(b) + (c ? '到' + cnNum(c) : '') + '節');
   t = t.replace(/321/g, '三二一').replace(/920/g, '九二零').replace(/235/g, '二三五');
   t = t.replace(/[：]/g, '，');
-  // 希伯來文原文不朗讀（會念得很怪）
-  t = t.replace(/[\u0370-\u03FF\u1F00-\u1FFF][\u0370-\u03FF\u1F00-\u1FFF\s,.·'’]*/g, ' ');
+  TTS_SAY.forEach(r => { t = t.replace(r[0], r[1]); });
+  t = t.replace(/\s+([，。！？；、])/g, '$1');
   return t.replace(/\s{2,}/g, ' ').trim();
 }
 function cnNum(n){
@@ -1556,17 +1627,22 @@ async function ttsFetch(piece){
   return blob;
 }
 
-let AU = null, SPK = { on:false, pause:false, tok:0, list:[], i:0, title:'', prep:0, total:0 };
-function audioEl(){
-  if (!AU){
-    AU = new Audio(); AU.preload = 'auto'; AU.loop = false;
-    AU.setAttribute('playsinline', '');
-    /* 背景播放：鎖屏／切到別的 App 時，系統的播放控制列要能操作 */
-    AU.addEventListener('play',  () => { mediaState('playing'); });
-    AU.addEventListener('pause', () => { mediaState('paused'); });
+let AUP = null, SPK = { on:false, pause:false, tok:0, list:[], i:0, title:'', prep:0, total:0 };
+/* 兩個播放器輪流用：一個在播，另一個先把下一段 load 好，接起來不會卡 */
+function audioPair(){
+  if (!AUP){
+    AUP = [0, 1].map(() => {
+      const a = new Audio(); a.preload = 'auto'; a.loop = false;
+      a.setAttribute('playsinline', '');
+      /* 背景播放：鎖屏／切到別的 App 時，系統的播放控制列要能操作 */
+      a.addEventListener('play',  () => { mediaState('playing'); });
+      a.addEventListener('pause', () => { if (!SPK.on) mediaState('paused'); });
+      return a;
+    });
   }
-  return AU;
+  return AUP;
 }
+const audioEl = () => audioPair()[0];
 /* 鎖屏／耳機／車機的播放控制 */
 function mediaState(st){
   try { if (navigator.mediaSession) navigator.mediaSession.playbackState = st; } catch(e){}
@@ -1585,55 +1661,112 @@ function mediaSetup(title){
       album: '國度321空中團契',
       artwork: ic ? [{ src: ic, sizes:'180x180', type:'image/png' }] : [],
     });
-    navigator.mediaSession.setActionHandler('play',  () => { const a = audioEl(); a.play(); SPK.pause = false; drawBar(); });
-    navigator.mediaSession.setActionHandler('pause', () => { const a = audioEl(); a.pause(); SPK.pause = true; drawBar(); });
+    navigator.mediaSession.setActionHandler('play',  () => { if (SPK.pause) togglePause(); });
+    navigator.mediaSession.setActionHandler('pause', () => { if (!SPK.pause) togglePause(); });
     navigator.mediaSession.setActionHandler('stop',  () => stopSpeak());
-    navigator.mediaSession.setActionHandler('seekbackward',  () => { const a = audioEl(); a.currentTime = Math.max(0, a.currentTime - 15); });
-    navigator.mediaSession.setActionHandler('seekforward',   () => { const a = audioEl(); a.currentTime = a.currentTime + 15; });
+    navigator.mediaSession.setActionHandler('previoustrack', () => spkStep(-1));
+    navigator.mediaSession.setActionHandler('nexttrack',     () => spkStep(1));
+    navigator.mediaSession.setActionHandler('seekbackward',  () => spkStep(-1));
+    navigator.mediaSession.setActionHandler('seekforward',   () => spkStep(1));
   } catch(e){}
 }
+/* ── 串流播放器 ───────────────────────────────────────────
+   一段一段抓、一段一段播：抓到前兩段就開始播，其餘邊播邊抓。
+   兩個 <audio> 輪流用（下一段先 load 好），所以段與段之間不會卡住。
+   每一段都記著它對應到畫面上的哪幾句，播到那一段就把那幾句標起來、捲過去。  */
+const PRE_START = 2;      // 抓到幾段就開播
+const PRE_AHEAD = 8;      // 播放中隨時往前多抓幾段
+const SILENT_MP3 = 'data:audio/mpeg;base64,//uQxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAACcQCA';
+
+let PL = null;
+function playSegs(segs, title, lesson){
+  if (!segs.length) return;
+  if (!S.set.human) return sayNative(segs.map(s => s.t).join('\n'));
+  stopSpeak();
+  const my = ++SPK.tok;
+  SPK = { on:true, pause:false, tok:my, list:segs, i:0, title:title || '朗讀中', prep:0, total:segs.length };
+  PL = { tok:my, segs, blobs:new Array(segs.length), pend:new Array(segs.length).fill(0),
+         try:new Array(segs.length).fill(0),
+         i:0, cur:0, lesson:lesson || 0, fail:0, running:0 };
+  const els = audioPair();
+  els.forEach(a => { try { a.pause(); a.removeAttribute('src'); a.load(); } catch(e){} });
+  /* 使用者按下按鈕的這一刻，把兩個播放器都解鎖（iOS 只認手勢當下的 play）*/
+  els.forEach(a => { try { a.src = SILENT_MP3; const p = a.play(); if (p && p.catch) p.catch(() => {}); } catch(e){} });
+  setTimeout(() => els.forEach(a => { try { if (a !== els[0]) a.pause(); } catch(e){} }), 0);
+  mediaSetup(SPK.title);
+  drawBar();
+  plPump();
+  plWaitAndStart();
+}
+function plFetch(k){
+  if (!PL || PL.tok !== SPK.tok) return;
+  if (PL.blobs[k] || PL.pend[k]) return;
+  PL.pend[k] = 1; PL.running++;
+  ttsFetch(PL.segs[k].t).then(b => { if (PL && PL.tok === SPK.tok) PL.blobs[k] = b; },
+                               () => { if (PL){ PL.fail++; PL.try[k] = (PL.try[k] || 0) + 1; } })
+    .then(() => {
+      if (!PL || PL.tok !== SPK.tok) return;
+      PL.pend[k] = 0; PL.running--;
+      SPK.prep = PL.blobs.filter(Boolean).length; drawBar(); plPump();
+    });
+}
+/* 從正在播的那一段往前看幾段，缺的就補抓（抓壞的也會自動重試）*/
+function plPump(){
+  if (!PL || PL.tok !== SPK.tok) return;
+  const end = Math.min(PL.segs.length, Math.max(PRE_START, PL.i + 1 + PRE_AHEAD));
+  for (let k = PL.i; k < end && PL.running < 4; k++){
+    if ((PL.try[k] || 0) < 3) plFetch(k);
+  }
+}
+function plWaitAndStart(){
+  const my = SPK.tok;
+  const tick = () => {
+    if (!PL || PL.tok !== my || !SPK.on) return;
+    const ready = PL.blobs[0] && (PL.blobs[1] || PL.segs.length < 2);
+    if (ready) return plPlay(0);
+    if (PL.fail >= 3 && !PL.blobs[0]){
+      const txt = PL.segs.map(s => s.t).join('\n');
+      stopSpeak(); toast('真人語音連不上，改用裝置語音'); return sayNative(txt);
+    }
+    setTimeout(tick, 120);
+  };
+  tick();
+}
+function plPlay(k){
+  if (!PL || PL.tok !== SPK.tok) return;
+  if (k >= PL.segs.length) return stopSpeak();
+  const b = PL.blobs[k];
+  if (!b){
+    if ((PL.try[k] || 0) >= 3){              // 這一段真的抓不到，跳過去，不要卡住整課
+      PL.i = k; SPK.i = k; return plPlay(k + 1);
+    }
+    SPK.buffering = true; SPK.i = k; drawBar(); plPump();   // 還沒到，等一下再播（不跳過）
+    return setTimeout(() => plPlay(k), 150);
+  }
+  SPK.buffering = false;
+  PL.i = k; SPK.i = k;
+  const els = audioPair(), a = els[PL.cur];
+  a.src = URL.createObjectURL(b);
+  a.onended = () => {
+    if (!PL || PL.tok !== SPK.tok) return;
+    try { URL.revokeObjectURL(a.src); } catch(e){}
+    PL.cur = 1 - PL.cur;
+    plPlay(k + 1);
+  };
+  a.onerror = () => { if (PL && PL.tok === SPK.tok){ PL.cur = 1 - PL.cur; plPlay(k + 1); } };
+  const p = a.play(); if (p && p.catch) p.catch(() => {});
+  spkMark(PL.segs[k]);
+  drawBar();
+  plPump();
+  /* 下一段先 load 好，接得上 */
+  const nb = PL.blobs[k + 1];
+  if (nb){ const nx = els[1 - PL.cur];
+    try { nx.src = URL.createObjectURL(nb); nx.load(); } catch(e){} }
+}
 async function speak(text, title){
-  if (!S.set.human) return sayNative(text);
   const chunks = ttsChunks(text);
   if (!chunks.length) return;
-  const my = ++SPK.tok;
-  SPK = { on:true, pause:false, tok:my, list:chunks, i:0, title:title || '朗讀中', prep:0, total:chunks.length };
-  drawBar();
-  const a = audioEl(); a.pause();
-  try {
-    const blobs = [];
-    const CONC = 6;
-    let next = 0, fail = false;
-    await new Promise(res => {
-      let running = 0, done = 0;
-      const pump = () => {
-        if (my !== SPK.tok) return res();
-        while (running < CONC && next < chunks.length){
-          const k = next++; running++;
-          ttsFetch(chunks[k]).then(b => { blobs[k] = b; }, () => { fail = true; })
-            .then(() => { running--; done++;
-              if (my === SPK.tok){ SPK.prep = done; drawBar(); }
-              if (done === chunks.length) res(); else pump(); });
-        }
-      };
-      pump();
-    });
-    if (my !== SPK.tok) return;
-    if (fail || blobs.filter(Boolean).length === 0) throw new Error('fetch failed');
-    SPK.prep = SPK.total;
-    const url = URL.createObjectURL(new Blob(blobs.filter(Boolean), { type:'audio/mpeg' }));
-    a.src = url;
-    a.onended = () => { if (my === SPK.tok) stopSpeak(); };
-    a.onerror = () => { if (my === SPK.tok){ stopSpeak(); sayNative(text); } };
-    mediaSetup(SPK.title);
-    await a.play();
-    drawBar();
-  } catch(e){
-    if (my !== SPK.tok) return;
-    stopSpeak();
-    toast('真人語音連不上，改用裝置語音');
-    sayNative(text);
-  }
+  playSegs(chunks.map(t => ({ t })), title);
 }
 function sayNative(t){
   if (!window.speechSynthesis) return toast('這台裝置不支援朗讀');
@@ -1646,15 +1779,27 @@ function sayNative(t){
   speechSynthesis.speak(u);
 }
 function stopSpeak(){
-  SPK.tok++; SPK.on = false; SPK.pause = false;
-  try { audioEl().pause(); } catch(e){}
+  SPK.tok++; SPK.on = false; SPK.pause = false; SPK.buffering = false;
+  PL = null;
+  try { audioPair().forEach(a => { a.pause(); a.onended = null; a.onerror = null; }); } catch(e){}
   try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch(e){}
+  spkClear();
   drawBar();
 }
+function plCurEl(){ const els = audioPair(); return els[PL ? PL.cur : 0]; }
 function togglePause(){
-  const a = audioEl();
-  if (SPK.pause){ a.play(); SPK.pause = false; } else { a.pause(); SPK.pause = true; }
+  const a = plCurEl();
+  if (SPK.pause){ const p = a.play(); if (p && p.catch) p.catch(() => {}); SPK.pause = false; }
+  else { a.pause(); SPK.pause = true; }
   drawBar();
+}
+/* 往前／往後跳一句 */
+function spkStep(d){
+  if (!PL) return;
+  const k = Math.max(0, Math.min(PL.segs.length - 1, PL.i + d));
+  try { plCurEl().pause(); plCurEl().onended = null; } catch(e){}
+  PL.i = k; SPK.pause = false;
+  plPump(); plPlay(k);
 }
 function drawBar(){
   let el = $('#spkbar');
@@ -1663,12 +1808,67 @@ function drawBar(){
     el = document.createElement('div'); el.id = 'spkbar'; el.className = 'spkbar';
     document.body.appendChild(el);
   }
-  const prep = SPK.total && SPK.prep < SPK.total
-    ? `<span class="pv">準備中 ${SPK.prep}/${SPK.total}</span>` : '';
-  el.innerHTML = `<span class="dot"></span><b>${esc(SPK.title)}</b>${prep}
+  const st = SPK.buffering ? `<span class="pv">緩衝中…</span>`
+    : SPK.total ? `<span class="pv">${(SPK.i || 0) + 1}/${SPK.total}</span>` : '';
+  const follow = PL && PL.lesson
+    ? `<button class="${S.set.follow === 0 ? '' : 'on'}" title="自動捲動"
+         onclick="toggleFollow()">${S.set.follow === 0 ? '⇕' : '⇳'}</button>` : '';
+  el.innerHTML = `<span class="dot"></span><b>${esc(SPK.title)}</b>${st}
+    <button onclick="spkStep(-1)" title="上一句">⏮</button>
     <button onclick="togglePause()">${SPK.pause ? '▶' : '⏸'}</button>
+    <button onclick="spkStep(1)" title="下一句">⏭</button>${follow}
     <button onclick="stopSpeak()">✕</button>`;
 }
+function toggleFollow(){
+  S.set.follow = S.set.follow === 0 ? 1 : 0; save(); drawBar();
+  if (S.set.follow && PL) spkMark(PL.segs[PL.i]);
+  toast(S.set.follow ? '朗讀時自動捲動' : '不自動捲動，畫面由你控制');
+}
+
+/* ── 標示正在讀的那一句，並且捲到它 ── */
+let SPK_LAST = [];
+function spkClear(){
+  document.querySelectorAll('.spk-now').forEach(e => e.classList.remove('spk-now'));
+  SPK_LAST = [];
+}
+function spkMark(seg){
+  if (!seg || !PL || !PL.lesson) return;
+  if (R.tab !== 'course' || R.ch !== PL.lesson || R.sub !== 'lesson') return;  // 不在這一頁就不動畫面
+  spkClear();
+  const n = PL.lesson;
+  const els = [];
+  if (seg.js && seg.js.length){
+    seg.js.forEach(j => {
+      const e = document.querySelector(`.les .mks[data-k="l|${n}|${seg.i}|${seg.part}|${j}"]`);
+      if (e) els.push(e);
+    });
+  }
+  if (!els.length){
+    const blk = document.getElementById(`lb${n}_${seg.i}`);
+    if (blk) els.push(blk);
+  }
+  if (!els.length) return;
+  /* 想更深是收起來的，讀到它就打開 */
+  const dt = els[0].closest('details.deeper');
+  if (dt && !dt.open) dt.open = true;
+  els.forEach(e => e.classList.add('spk-now'));
+  SPK_LAST = els;
+  if (S.set.follow === 0) return;
+  if (Date.now() < (SPK.holdScroll || 0)) return;      // 使用者剛剛自己捲過，先別搶
+  SPK.autoScrolling = true;
+  clearTimeout(SPK.asT);
+  SPK.asT = setTimeout(() => { SPK.autoScrolling = false; }, 900);
+  try { els[0].scrollIntoView({ behavior:'smooth', block:'center' }); } catch(e){ els[0].scrollIntoView(); }
+}
+/* 使用者自己動手捲動時，先讓畫面歸他，六秒後再接手 */
+(function(){
+  const hold = () => { if (SPK.on) SPK.holdScroll = Date.now() + 6000; };
+  ['wheel', 'touchstart', 'touchmove', 'pointerdown'].forEach(ev =>
+    window.addEventListener(ev, hold, { passive:true }));
+  window.addEventListener('keydown', e => {
+    if (/^(Arrow|Page)|^(Home|End|Space)$/.test(e.key || '')) hold();
+  });
+})();
 
 /* ═══════ ② 畫線與領受 ═══════ */
 /* key 格式：  v|8:1          一節經文
@@ -1707,9 +1907,31 @@ function mkSheet(k){
     <div class="row" style="margin-top:10px">
       <button class="btn pri" onclick="mkSave('${k}')">儲存</button>
       <button class="btn" onclick="askXz(mkText('${k}'), '領受：' + (document.getElementById('mkin')||{}).value)">✨ 問小智</button>
-      <button class="btn" onclick="mkDel('${k}')">取消畫線</button>
+    </div>
+    <div class="row" style="margin-top:8px">
+      ${cur ? `<button class="btn danger" onclick="mkDrop('${k}')">🗑 刪除領受</button>` : ''}
+      <button class="btn danger" onclick="mkDel('${k}')">🗑 刪除畫線</button>
     </div>`);
   setTimeout(() => { const i = $('#mkin'); if (i) i.focus(); }, 60);
+}
+/* 只刪領受，畫線留著 */
+function mkDrop(k){
+  if (!mkHas(k)) return;
+  S.mk[k].n = ''; save();
+  const sh = $('#sheet'); if (sh) sh.classList.remove('on');
+  mkKeep(k, render); toast('領受已刪除');
+}
+/* 改完之後畫面停在原位：以那一句為錨，重畫後把它挪回同一個位置 */
+function mkKeep(k, fn){
+  const sel = '[data-k="' + k + '"]';
+  const before = document.querySelector(sel);
+  const top = before ? before.getBoundingClientRect().top : null;
+  fn();
+  if (top === null) return;
+  const after = document.querySelector(sel);
+  if (!after) return;
+  const now = after.getBoundingClientRect().top;
+  if (Math.abs(now - top) > 1) window.scrollBy(0, now - top);
 }
 /* 選色：記在這一處畫線上，也記成下一次的預設色 */
 function mkSetColor(k, c){
@@ -1730,9 +1952,24 @@ function mkSave(k){
   const v = ($('#mkin') || {}).value || '';
   const c = mkColor(k);
   S.mk[k] = { n:v.trim(), at:Date.now(), c:c }; save();
-  $('#sheet').classList.remove('on'); render(); toast('領受已存');
+  $('#sheet').classList.remove('on'); mkKeep(k, render); toast('領受已存');
 }
-function mkDel(k){ delete S.mk[k]; save(); $('#sheet').classList.remove('on'); render(); toast('已取消畫線'); }
+/* 刪掉畫線：畫面停在原位，不讓下一段跳上來 */
+function mkDel(k){
+  const sel = '[data-k="' + k + '"]';
+  const before = document.querySelector(sel);
+  const top = before ? before.getBoundingClientRect().top : null;
+  const y = window.scrollY;
+  delete S.mk[k]; save();
+  const sh = $('#sheet'); if (sh) sh.classList.remove('on');
+  render();
+  const after = document.querySelector(sel);
+  if (after && top !== null){
+    const now = after.getBoundingClientRect().top;
+    if (Math.abs(now - top) > 1) window.scrollBy(0, now - top);
+  } else { window.scrollTo(0, y); }
+  toast('已刪除畫線');
+}
 function mkText(k){
   const p = k.split('|');
   if (p[0] === 'v'){
@@ -1810,7 +2047,8 @@ function mkWrap(k, html){
   const on = mkHas(k), c = mkColor(k);
   const note = on && mkNote(k)
     ? `<span class="mknote"${c ? ` data-c="${c}"` : ''}><b>領受</b>　${esc(mkNote(k))}
-       <button class="mkask" onclick="event.stopPropagation();askXz(mkText('${k}'),'領受：${escA(mkNote(k))}')">✨ 問小智</button></span>` : '';
+       <button class="mkask" onclick="event.stopPropagation();askXz(mkText('${k}'),'領受：${escA(mkNote(k))}')">✨ 問小智</button>
+       <button class="mkask del" onclick="event.stopPropagation();mkDrop('${k}')">🗑 刪除</button></span>` : '';
   return `<span class="mks${on ? ' hl' : ''}"${c ? ` data-c="${c}"` : ''} data-k="${k}"
     onclick="event.stopPropagation();mkTap('${k}',this)">${html}</span>` + note;
 }
@@ -1856,6 +2094,7 @@ function vMarks(){
         <div class="row" style="margin-top:9px">
           <button class="btn xs2" onclick="mkSheet('${k}')">${mkNote(k) ? '修改領受' : '寫領受'}</button>
           <button class="btn xs2" onclick="askXz(mkText('${k}'),'${mkNote(k) ? '領受：' + escA(mkNote(k)) : ''}')">✨ 問小智</button>
+          <button class="btn xs2 danger" onclick="mkDel('${k}')">🗑 刪除</button>
         </div></div>`;
     });
   });
@@ -2168,9 +2407,10 @@ function render(){
   document.querySelectorAll('nav.tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === R.tab));
   $('#back').classList.toggle('hide', !(R.ch || R.sub));
   bindSearch();
-  /* 講義頁：回報這一課的語音下載到什麼程度 */
+  /* 講義頁：回報這一課的語音下載到什麼程度；重畫之後把正在讀的那一句補標回來 */
   if (R.tab === 'course' && R.ch && R.sub === 'lesson'){
     try { lesDlCheck(R.ch); } catch(e){}
+    if (SPK.on && PL && PL.lesson === R.ch) { try { spkMark(PL.segs[PL.i]); } catch(e){} }
   }
 }
 applyFS(); applyDark(); applyLang();
