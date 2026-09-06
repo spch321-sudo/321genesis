@@ -7,7 +7,7 @@
 ## 這個 repo 裡有什麼
 
 ```
-index.html              整支 App（含全部講義內容，約 4.5 MB）
+index.html              整支 App（含全部講義內容，約 5.9 MB）
 manifest.webmanifest    PWA 設定：名稱、圖示、啟動畫面顏色
 sw.js                   Service Worker，讓 App 離線也能讀
 icons/                  圖示（64／180／192／512／1024）
