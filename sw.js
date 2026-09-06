@@ -1,7 +1,7 @@
 /* 321創世記講義 · Service Worker（離線可用）
    版本字串在每次 make_site.py 重新打包時都會變，
    一變就會清掉舊快取、重新抓一份新的，使用者不必手動清除。 */
-const V = '創世記-713a5c7ada19';
+const V = '創世記-0b4df6348420';
 const SHELL = [
   './', './index.html', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png',
