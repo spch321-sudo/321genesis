@@ -1,0 +1,151 @@
+/* ============================================================================
+ * 321 App Core — 朗讀模組樣式  tts.css  v1.1.0
+ *
+ * 只有兩樣東西：正在朗讀的那一句（.spk-now），和底部的控制列（.spkbar）。
+ * 顏色一律走 CSS 變數，宿主 App 想換色只要覆寫變數，不必改這一份。
+ * ==========================================================================*/
+
+:root {
+  --spk-now: #FFE9A8;          /* 正在讀的那一句的底色 */
+  --spk-bar-bg: #12305E;       /* 控制列底色 */
+  --spk-bar-fg: #FFFFFF;
+  --spk-bar-on: #F0C462;       /* 「自動捲動」開著時的顏色 */
+  --spk-bar-bottom: 64px;      /* 底部分頁列的高度，宿主自己調（可以整段 calc，含 env(safe-area-inset-bottom)）*/
+  --spk-bar-gap-right: 0px;    /* 右下角有浮動鈕（例如「小智」）的 App 設它的寬度＋邊距 */
+  --spk-bar-z: 60;             /* 宿主若有更高的浮動層（小智 fab…），把它疊上去 */
+
+  /* 按鈕外觀：宿主本來就有自己一套樣子的，覆寫這四個就能長得一模一樣，
+     不必為了換基座而改變使用者看慣的畫面 */
+  --spk-btn-bg: transparent;
+  --spk-btn-size: 32px;
+  --spk-btn-radius: 8px;
+  --spk-btn-font: 16px;
+}
+
+/* ── 主題 ────────────────────────────────────────────────────────
+ * 淺色是底色。宿主用什麼機制標深色，核心都跟得上：
+ *   data-dark="1"（321 這一家 App 的慣例）／data-theme="dark"／class="dark"
+ * 只有在宿主完全沒有自己的主題開關時，才去聽作業系統——否則會出現
+ * 「App 是淺色的，標示卻是深色的」這種不一致。
+ * -------------------------------------------------------------- */
+:root[data-dark="1"],
+:root[data-theme="dark"],
+:root.dark {
+  --spk-now: #6B5A22;
+  --spk-bar-bg: #0B1D3A;
+}
+
+:root[data-dark="0"],
+:root[data-theme="light"],
+:root.light {
+  --spk-now: #FFE9A8;
+  --spk-bar-bg: #12305E;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-dark]):not([data-theme]):not(.dark):not(.light) {
+    --spk-now: #6B5A22;
+    --spk-bar-bg: #0B1D3A;
+  }
+}
+
+/* ── 正在朗讀的那一句 ──────────────────────────────────────────────
+ * 用 box-shadow 把底色往外撐，而不是加 padding——加 padding 會讓整段文字
+ * 在朗讀時跳動。box-decoration-break 讓跨行的句子兩行都有底。
+ * ------------------------------------------------------------------ */
+.spk-now {
+  background: var(--spk-now) !important;
+  border-radius: 4px;
+  box-shadow: 0 0 0 3px var(--spk-now);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition: background .18s ease;
+}
+
+/* ── 底部控制列 ────────────────────────────────────────────────── */
+.spkbar {
+  position: fixed;
+  left: 50%;
+  /* 右下角若有浮動鈕，整條往左讓一半的距離，兩邊看起來仍然平衡 */
+  transform: translateX(calc(-50% - var(--spk-bar-gap-right) / 2));
+  bottom: calc(var(--spk-bar-bottom) + 10px);
+  z-index: var(--spk-bar-z);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100vw - 24px - var(--spk-bar-gap-right));
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: var(--spk-bar-bg);
+  color: var(--spk-bar-fg);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, .34);
+  font-size: 14px;
+  line-height: 1;
+}
+
+.spkbar b {
+  font-weight: 600;
+  /* 標題讓給按鈕，但至少留得下幾個字，不要被擠成一個字加句點 */
+  flex: 1 1 auto;
+  min-width: 4.5em;
+  max-width: 34vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 「3/14」這種進度字：跟著控制列自己的字色走再調暗，
+   不要寫死成白色——有些 App 的控制列在深色模式反而是淺底深字。 */
+.spkbar .pv {
+  color: inherit;
+  opacity: .7;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.spkbar button {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  background: var(--spk-btn-bg);
+  color: var(--spk-bar-fg);
+  font-size: var(--spk-btn-font);
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  border-radius: var(--spk-btn-radius);
+  min-width: var(--spk-btn-size);
+  height: var(--spk-btn-size);
+  flex: 0 0 auto;
+}
+
+.spkbar button:active { background: rgba(255, 255, 255, .16); }
+.spkbar button.on { color: var(--spk-bar-on); }
+
+/* 正在播的小圓點 */
+.spkbar .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--spk-bar-on);
+  flex: 0 0 auto;
+  animation: spk-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes spk-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .35; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spkbar .dot { animation: none; }
+  .spk-now { transition: none; }
+}
+
+/* 窄螢幕：標題讓位給按鈕 */
+@media (max-width: 380px) {
+  .spkbar { gap: 4px; padding: 7px 9px; }
+  .spkbar b { max-width: 24vw; }
+  .spkbar button { min-width: 28px; height: 28px; font-size: 15px; }
+}
