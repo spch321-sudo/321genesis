@@ -1,0 +1,2333 @@
+{
+ "_說明": [
+  "美術圖庫（美圖背景）清單。c＝分類（對應下面 cats 的 id）、f＝大圖檔名、t＝縮圖檔名、n／ns／ne＝繁／簡／英名稱。",
+  "圖檔放在網站根目錄或 bg/ 資料夾都可以，App 兩邊都會找。",
+  "要加新圖：上傳 bgNN.jpg 與 bgNNs.jpg，再在 list 加一筆並填 c；某個分類一張圖都沒有時，App 會自動把那個分類藏起來。要加新分類，在 cats 加一筆即可。"
+ ],
+ "list": [
+  {
+   "f": "bg285.jpg",
+   "t": "bg285s.jpg",
+   "c": "bible",
+   "n": "伊甸園",
+   "ns": "伊甸园",
+   "ne": "Garden of Eden"
+  },
+  {
+   "f": "bg286.jpg",
+   "t": "bg286s.jpg",
+   "c": "bible",
+   "n": "挪亞出方舟",
+   "ns": "挪亚出方舟",
+   "ne": "Noah and the Ark"
+  },
+  {
+   "f": "bg287.jpg",
+   "t": "bg287s.jpg",
+   "c": "bible",
+   "n": "約瑟解夢",
+   "ns": "约瑟解梦",
+   "ne": "Joseph Before Pharaoh"
+  },
+  {
+   "f": "bg288.jpg",
+   "t": "bg288s.jpg",
+   "c": "bible",
+   "n": "雅各的天梯",
+   "ns": "雅各的天梯",
+   "ne": "Jacob's Ladder"
+  },
+  {
+   "f": "bg289.jpg",
+   "t": "bg289s.jpg",
+   "c": "bible",
+   "n": "亞伯拉罕數星",
+   "ns": "亚伯拉罕数星",
+   "ne": "Abraham and the Stars"
+  },
+  {
+   "f": "bg290.jpg",
+   "t": "bg290s.jpg",
+   "c": "bible",
+   "n": "路得拾穗",
+   "ns": "路得拾穗",
+   "ne": "Ruth Gleaning"
+  },
+  {
+   "f": "bg291.jpg",
+   "t": "bg291s.jpg",
+   "c": "bible",
+   "n": "摩西過紅海",
+   "ns": "摩西过红海",
+   "ne": "Crossing the Red Sea"
+  },
+  {
+   "f": "bg292.jpg",
+   "t": "bg292s.jpg",
+   "c": "bible",
+   "n": "燃燒的荊棘",
+   "ns": "燃烧的荆棘",
+   "ne": "The Burning Bush"
+  },
+  {
+   "f": "bg293.jpg",
+   "t": "bg293s.jpg",
+   "c": "bible",
+   "n": "大衛戰歌利亞",
+   "ns": "大卫战歌利亚",
+   "ne": "David and Goliath"
+  },
+  {
+   "f": "bg294.jpg",
+   "t": "bg294s.jpg",
+   "c": "bible",
+   "n": "少年撒母耳蒙召",
+   "ns": "少年撒母耳蒙召",
+   "ne": "Young Samuel Called"
+  },
+  {
+   "f": "bg295.jpg",
+   "t": "bg295s.jpg",
+   "c": "bible",
+   "n": "烏鴉送餅給以利亞",
+   "ns": "乌鸦送饼给以利亚",
+   "ne": "Ravens Feed Elijah"
+  },
+  {
+   "f": "bg296.jpg",
+   "t": "bg296s.jpg",
+   "c": "bible",
+   "n": "但以理在獅子坑",
+   "ns": "但以理在狮子坑",
+   "ne": "Daniel in the Lions' Den"
+  },
+  {
+   "f": "bg297.jpg",
+   "t": "bg297s.jpg",
+   "c": "bible",
+   "n": "約拿上岸",
+   "ns": "约拿上岸",
+   "ne": "Jonah on the Shore"
+  },
+  {
+   "f": "bg298.jpg",
+   "t": "bg298s.jpg",
+   "c": "bible",
+   "n": "耶穌平靜風浪",
+   "ns": "耶稣平静风浪",
+   "ne": "Jesus Calms the Storm"
+  },
+  {
+   "f": "bg299.jpg",
+   "t": "bg299s.jpg",
+   "c": "bible",
+   "n": "耶穌受洗",
+   "ns": "耶稣受洗",
+   "ne": "Baptism of Jesus"
+  },
+  {
+   "f": "bg300.jpg",
+   "t": "bg300s.jpg",
+   "c": "bible",
+   "n": "耶穌降生",
+   "ns": "耶稣降生",
+   "ne": "The Nativity"
+  },
+  {
+   "f": "bg301.jpg",
+   "t": "bg301s.jpg",
+   "c": "bible",
+   "n": "浪子回頭",
+   "ns": "浪子回头",
+   "ne": "The Prodigal Son"
+  },
+  {
+   "f": "bg302.jpg",
+   "t": "bg302s.jpg",
+   "c": "bible",
+   "n": "好撒瑪利亞人",
+   "ns": "好撒玛利亚人",
+   "ne": "The Good Samaritan"
+  },
+  {
+   "f": "bg303.jpg",
+   "t": "bg303s.jpg",
+   "c": "bible",
+   "n": "五餅二魚",
+   "ns": "五饼二鱼",
+   "ne": "Five Loaves and Two Fish"
+  },
+  {
+   "f": "bg304.jpg",
+   "t": "bg304s.jpg",
+   "c": "bible",
+   "n": "復活的清晨",
+   "ns": "复活的清晨",
+   "ne": "Resurrection Morning"
+  },
+  {
+   "f": "bg305.jpg",
+   "t": "bg305s.jpg",
+   "c": "bible",
+   "n": "夏甲與以實瑪利得水",
+   "ns": "夏甲与以实玛利得水",
+   "ne": "Hagar and Ishmael Given Water"
+  },
+  {
+   "f": "bg306.jpg",
+   "t": "bg306s.jpg",
+   "c": "bible",
+   "n": "嬰孩摩西在蘆葦中",
+   "ns": "婴孩摩西在芦苇中",
+   "ne": "Baby Moses in the Reeds"
+  },
+  {
+   "f": "bg307.jpg",
+   "t": "bg307s.jpg",
+   "c": "bible",
+   "n": "約瑟與弟兄相認",
+   "ns": "约瑟与弟兄相认",
+   "ne": "Joseph Reunited with His Brothers"
+  },
+  {
+   "f": "bg308.jpg",
+   "t": "bg308s.jpg",
+   "c": "bible",
+   "n": "利百加井邊汲水",
+   "ns": "利百加井边汲水",
+   "ne": "Rebekah at the Well"
+  },
+  {
+   "f": "bg309.jpg",
+   "t": "bg309s.jpg",
+   "c": "bible",
+   "n": "亞倫與戶珥扶摩西的手",
+   "ns": "亚伦与户珥扶摩西的手",
+   "ne": "Aaron and Hur Hold Up Moses' Hands"
+  },
+  {
+   "f": "bg310.jpg",
+   "t": "bg310s.jpg",
+   "c": "bible",
+   "n": "磐石出水",
+   "ns": "磐石出水",
+   "ne": "Water from the Rock"
+  },
+  {
+   "f": "bg311.jpg",
+   "t": "bg311s.jpg",
+   "c": "bible",
+   "n": "以色列人撿嗎哪",
+   "ns": "以色列人捡吗哪",
+   "ne": "Gathering the Manna"
+  },
+  {
+   "f": "bg312.jpg",
+   "t": "bg312s.jpg",
+   "c": "bible",
+   "n": "基甸受天使呼召",
+   "ns": "基甸受天使呼召",
+   "ne": "Gideon Called"
+  },
+  {
+   "f": "bg313.jpg",
+   "t": "bg313s.jpg",
+   "c": "bible",
+   "n": "喇合一家得救",
+   "ns": "喇合一家得救",
+   "ne": "Rahab's Family Saved"
+  },
+  {
+   "f": "bg314.jpg",
+   "t": "bg314s.jpg",
+   "c": "bible",
+   "n": "抬約櫃過約旦河",
+   "ns": "抬约柜过约旦河",
+   "ne": "Crossing the Jordan with the Ark"
+  },
+  {
+   "f": "bg315.jpg",
+   "t": "bg315s.jpg",
+   "c": "bible",
+   "n": "寡婦的油不斷",
+   "ns": "寡妇的油不断",
+   "ne": "The Widow's Oil"
+  },
+  {
+   "f": "bg316.jpg",
+   "t": "bg316s.jpg",
+   "c": "bible",
+   "n": "約拿單贈袍給大衛",
+   "ns": "约拿单赠袍给大卫",
+   "ne": "Jonathan Gives David His Robe"
+  },
+  {
+   "f": "bg317.jpg",
+   "t": "bg317s.jpg",
+   "c": "bible",
+   "n": "哈拿在殿中禱告",
+   "ns": "哈拿在殿中祷告",
+   "ne": "Hannah Prays"
+  },
+  {
+   "f": "bg318.jpg",
+   "t": "bg318s.jpg",
+   "c": "bible",
+   "n": "迦拿婚宴水變酒",
+   "ns": "迦拿婚宴水变酒",
+   "ne": "Water into Wine at Cana"
+  },
+  {
+   "f": "bg319.jpg",
+   "t": "bg319s.jpg",
+   "c": "bible",
+   "n": "以斯帖覲見王",
+   "ns": "以斯帖觐见王",
+   "ne": "Esther Before the King"
+  },
+  {
+   "f": "bg320.jpg",
+   "t": "bg320s.jpg",
+   "c": "bible",
+   "n": "乃縵在約旦河得潔淨",
+   "ns": "乃缦在约旦河得洁净",
+   "ne": "Naaman Cleansed in the Jordan"
+  },
+  {
+   "f": "bg321.jpg",
+   "t": "bg321s.jpg",
+   "c": "bible",
+   "n": "井邊的撒瑪利亞婦人",
+   "ns": "井边的撒玛利亚妇人",
+   "ne": "The Samaritan Woman at the Well"
+  },
+  {
+   "f": "bg322.jpg",
+   "t": "bg322s.jpg",
+   "c": "bible",
+   "n": "睚魯的女兒復活",
+   "ns": "睚鲁的女儿复活",
+   "ne": "Jairus' Daughter Raised"
+  },
+  {
+   "f": "bg323.jpg",
+   "t": "bg323s.jpg",
+   "c": "bible",
+   "n": "耶穌為小孩子祝福",
+   "ns": "耶稣为小孩子祝福",
+   "ne": "Jesus Blesses the Children"
+  },
+  {
+   "f": "bg324.jpg",
+   "t": "bg324s.jpg",
+   "c": "bible",
+   "n": "耶穌洗門徒的腳",
+   "ns": "耶稣洗门徒的脚",
+   "ne": "Jesus Washes the Disciples' Feet"
+  },
+  {
+   "f": "bg325.jpg",
+   "t": "bg325s.jpg",
+   "c": "bible",
+   "n": "保羅西拉獄中頌讚",
+   "ns": "保罗西拉狱中颂赞",
+   "ne": "Paul and Silas Praise in Prison"
+  },
+  {
+   "f": "bg326.jpg",
+   "t": "bg326s.jpg",
+   "c": "bible",
+   "n": "彼得醫治生來瘸腿的人",
+   "ns": "彼得医治生来瘸腿的人",
+   "ne": "Peter Heals the Lame Man"
+  },
+  {
+   "f": "bg327.jpg",
+   "t": "bg327s.jpg",
+   "c": "bible",
+   "n": "以馬忤斯路上",
+   "ns": "以马忤斯路上",
+   "ne": "The Road to Emmaus"
+  },
+  {
+   "f": "bg328.jpg",
+   "t": "bg328s.jpg",
+   "c": "bible",
+   "n": "畢士大池邊的病人",
+   "ns": "毕士大池边的病人",
+   "ne": "The Man at Bethesda"
+  },
+  {
+   "f": "bg329.jpg",
+   "t": "bg329s.jpg",
+   "c": "bible",
+   "n": "撒該爬上桑樹",
+   "ns": "撒该爬上桑树",
+   "ne": "Zacchaeus in the Sycamore"
+  },
+  {
+   "f": "bg330.jpg",
+   "t": "bg330s.jpg",
+   "c": "bible",
+   "n": "西面抱著嬰孩耶穌",
+   "ns": "西面抱着婴孩耶稣",
+   "ne": "Simeon Holds the Child Jesus"
+  },
+  {
+   "f": "bg331.jpg",
+   "t": "bg331s.jpg",
+   "c": "bible",
+   "n": "博士跟隨星星而來",
+   "ns": "博士跟随星星而来",
+   "ne": "The Magi Journey"
+  },
+  {
+   "f": "bg332.jpg",
+   "t": "bg332s.jpg",
+   "c": "bible",
+   "n": "尼希米重建城牆",
+   "ns": "尼希米重建城墙",
+   "ne": "Nehemiah Rebuilds the Wall"
+  },
+  {
+   "f": "bg333.jpg",
+   "t": "bg333s.jpg",
+   "c": "bible",
+   "n": "書念婦人的兒子復活",
+   "ns": "书念妇人的儿子复活",
+   "ne": "The Shunammite's Son Revived"
+  },
+  {
+   "f": "bg334.jpg",
+   "t": "bg334s.jpg",
+   "c": "bible",
+   "n": "以利亞在何烈山洞口",
+   "ns": "以利亚在何烈山洞口",
+   "ne": "Elijah at the Cave"
+  },
+  {
+   "f": "bg335.jpg",
+   "t": "bg335s.jpg",
+   "c": "bible",
+   "n": "所羅門獻殿禱告",
+   "ns": "所罗门献殿祷告",
+   "ne": "Solomon's Prayer"
+  },
+  {
+   "f": "bg336.jpg",
+   "t": "bg336s.jpg",
+   "c": "bible",
+   "n": "大衛恩待米非波設",
+   "ns": "大卫恩待米非波设",
+   "ne": "David and Mephibosheth"
+  },
+  {
+   "f": "bg337.jpg",
+   "t": "bg337s.jpg",
+   "c": "bible",
+   "n": "拿俄米懷抱孫子俄備得",
+   "ns": "拿俄米怀抱孙子俄备得",
+   "ne": "Naomi and Baby Obed"
+  },
+  {
+   "f": "bg338.jpg",
+   "t": "bg338s.jpg",
+   "c": "bible",
+   "n": "波阿斯與路得共餐",
+   "ns": "波阿斯与路得共餐",
+   "ne": "Boaz and Ruth Share a Meal"
+  },
+  {
+   "f": "bg339.jpg",
+   "t": "bg339s.jpg",
+   "c": "bible",
+   "n": "摩西帶十誡下西奈山",
+   "ns": "摩西带十诫下西奈山",
+   "ne": "Moses Descends with the Tablets"
+  },
+  {
+   "f": "bg340.jpg",
+   "t": "bg340s.jpg",
+   "c": "bible",
+   "n": "出埃及的旅程",
+   "ns": "出埃及的旅程",
+   "ne": "The Exodus Journey"
+  },
+  {
+   "f": "bg341.jpg",
+   "t": "bg341s.jpg",
+   "c": "bible",
+   "n": "約瑟奉養父親雅各",
+   "ns": "约瑟奉养父亲雅各",
+   "ne": "Joseph Provides for Jacob"
+  },
+  {
+   "f": "bg342.jpg",
+   "t": "bg342s.jpg",
+   "c": "bible",
+   "n": "雅各與以掃和好",
+   "ns": "雅各与以扫和好",
+   "ne": "Jacob and Esau Reconciled"
+  },
+  {
+   "f": "bg343.jpg",
+   "t": "bg343s.jpg",
+   "c": "bible",
+   "n": "以撒迎接利百加",
+   "ns": "以撒迎接利百加",
+   "ne": "Isaac Awaits Rebekah"
+  },
+  {
+   "f": "bg344.jpg",
+   "t": "bg344s.jpg",
+   "c": "bible",
+   "n": "亞伯拉罕款待三位客人",
+   "ns": "亚伯拉罕款待三位客人",
+   "ne": "Abraham Hosts Three Visitors"
+  },
+  {
+   "f": "bg195.jpg",
+   "t": "bg195s.jpg",
+   "c": "scenery",
+   "n": "石灰華梯池",
+   "ns": "石灰华梯池",
+   "ne": "Travertine Terraces"
+  },
+  {
+   "f": "bg196.jpg",
+   "t": "bg196s.jpg",
+   "c": "scenery",
+   "n": "粉紅鹽湖",
+   "ns": "粉红盐湖",
+   "ne": "Pink Salt Lake"
+  },
+  {
+   "f": "bg197.jpg",
+   "t": "bg197s.jpg",
+   "c": "scenery",
+   "n": "玄武岩海岸日出",
+   "ns": "玄武岩海岸日出",
+   "ne": "Basalt Coast Sunrise"
+  },
+  {
+   "f": "bg198.jpg",
+   "t": "bg198s.jpg",
+   "c": "scenery",
+   "n": "紅岩石塔",
+   "ns": "红岩石塔",
+   "ne": "Red Rock Spires"
+  },
+  {
+   "f": "bg199.jpg",
+   "t": "bg199s.jpg",
+   "c": "scenery",
+   "n": "冰河谷地",
+   "ns": "冰河谷地",
+   "ne": "Glacier Valley"
+  },
+  {
+   "f": "bg200.jpg",
+   "t": "bg200s.jpg",
+   "c": "scenery",
+   "n": "白樺羽扇豆",
+   "ns": "白桦羽扇豆",
+   "ne": "Birch & Lupine"
+  },
+  {
+   "f": "bg201.jpg",
+   "t": "bg201s.jpg",
+   "c": "scenery",
+   "n": "白堊海崖",
+   "ns": "白垩海崖",
+   "ne": "Chalk Cliffs"
+  },
+  {
+   "f": "bg202.jpg",
+   "t": "bg202s.jpg",
+   "c": "scenery",
+   "n": "冰洞藍影",
+   "ns": "冰洞蓝影",
+   "ne": "Blue Ice Cave"
+  },
+  {
+   "f": "bg203.jpg",
+   "t": "bg203s.jpg",
+   "c": "scenery",
+   "n": "紅樹林淺灣",
+   "ns": "红树林浅湾",
+   "ne": "Mangrove Shallows"
+  },
+  {
+   "f": "bg204.jpg",
+   "t": "bg204s.jpg",
+   "c": "scenery",
+   "n": "棉花草濕地",
+   "ns": "棉花草湿地",
+   "ne": "Cotton Grass Wetland"
+  },
+  {
+   "f": "bg205.jpg",
+   "t": "bg205s.jpg",
+   "c": "scenery",
+   "n": "秋日落葉松溪",
+   "ns": "秋日落叶松溪",
+   "ne": "Autumn Larch Stream"
+  },
+  {
+   "f": "bg206.jpg",
+   "t": "bg206s.jpg",
+   "c": "scenery",
+   "n": "紫藤湖畔",
+   "ns": "紫藤湖畔",
+   "ne": "Wisteria Lake"
+  },
+  {
+   "f": "bg207.jpg",
+   "t": "bg207s.jpg",
+   "c": "scenery",
+   "n": "喀斯特山水",
+   "ns": "喀斯特山水",
+   "ne": "Karst River"
+  },
+  {
+   "f": "bg208.jpg",
+   "t": "bg208s.jpg",
+   "c": "scenery",
+   "n": "珊瑚潮池日落",
+   "ns": "珊瑚潮池日落",
+   "ne": "Coral Tidepool Sunset"
+  },
+  {
+   "f": "bg209.jpg",
+   "t": "bg209s.jpg",
+   "c": "scenery",
+   "n": "杜鵑雲海",
+   "ns": "杜鹃云海",
+   "ne": "Rhododendron Sea of Clouds"
+  },
+  {
+   "f": "bg210.jpg",
+   "t": "bg210s.jpg",
+   "c": "scenery",
+   "n": "白沙海灘",
+   "ns": "白沙海滩",
+   "ne": "White Sand Beach"
+  },
+  {
+   "f": "bg211.jpg",
+   "t": "bg211s.jpg",
+   "c": "scenery",
+   "n": "海灣草原",
+   "ns": "海湾草原",
+   "ne": "Coastal Meadow"
+  },
+  {
+   "f": "bg212.jpg",
+   "t": "bg212s.jpg",
+   "c": "scenery",
+   "n": "地熱彩湖",
+   "ns": "地热彩湖",
+   "ne": "Geothermal Lake"
+  },
+  {
+   "f": "bg213.jpg",
+   "t": "bg213s.jpg",
+   "c": "scenery",
+   "n": "橄欖樹夕照",
+   "ns": "橄榄树夕照",
+   "ne": "Olive Tree Sunset"
+  },
+  {
+   "f": "bg214.jpg",
+   "t": "bg214s.jpg",
+   "c": "scenery",
+   "n": "冰封瀑布",
+   "ns": "冰封瀑布",
+   "ne": "Frozen Falls"
+  },
+  {
+   "f": "bg175.jpg",
+   "t": "bg175s.jpg",
+   "c": "scenery",
+   "n": "雪山瀑布野花",
+   "ns": "雪山瀑布野花",
+   "ne": "Alpine Waterfall"
+  },
+  {
+   "f": "bg176.jpg",
+   "t": "bg176s.jpg",
+   "c": "scenery",
+   "n": "海灣日出",
+   "ns": "海湾日出",
+   "ne": "Bay Sunrise"
+  },
+  {
+   "f": "bg177.jpg",
+   "t": "bg177s.jpg",
+   "c": "scenery",
+   "n": "秋楓溪流",
+   "ns": "秋枫溪流",
+   "ne": "Autumn Maple Stream"
+  },
+  {
+   "f": "bg178.jpg",
+   "t": "bg178s.jpg",
+   "c": "scenery",
+   "n": "晨霧石徑",
+   "ns": "晨雾石径",
+   "ne": "Misty Trail"
+  },
+  {
+   "f": "bg179.jpg",
+   "t": "bg179s.jpg",
+   "c": "scenery",
+   "n": "雪山湖影",
+   "ns": "雪山湖影",
+   "ne": "Mountain Lake Reflection"
+  },
+  {
+   "f": "bg180.jpg",
+   "t": "bg180s.jpg",
+   "c": "scenery",
+   "n": "梯田雲海",
+   "ns": "梯田云海",
+   "ne": "Terraced Fields"
+  },
+  {
+   "f": "bg181.jpg",
+   "t": "bg181s.jpg",
+   "c": "scenery",
+   "n": "薰衣草莊園日出",
+   "ns": "薰衣草庄园日出",
+   "ne": "Lavender Sunrise"
+  },
+  {
+   "f": "bg182.jpg",
+   "t": "bg182s.jpg",
+   "c": "scenery",
+   "n": "櫻花溪流",
+   "ns": "樱花溪流",
+   "ne": "Cherry Blossom River"
+  },
+  {
+   "f": "bg183.jpg",
+   "t": "bg183s.jpg",
+   "c": "scenery",
+   "n": "熱帶海灣",
+   "ns": "热带海湾",
+   "ne": "Tropical Bay"
+  },
+  {
+   "f": "bg184.jpg",
+   "t": "bg184s.jpg",
+   "c": "scenery",
+   "n": "高山花海湖景",
+   "ns": "高山花海湖景",
+   "ne": "Alpine Meadow Lake"
+  },
+  {
+   "f": "bg185.jpg",
+   "t": "bg185s.jpg",
+   "c": "scenery",
+   "n": "金色麥田",
+   "ns": "金色麦田",
+   "ne": "Golden Wheat Field"
+  },
+  {
+   "f": "bg186.jpg",
+   "t": "bg186s.jpg",
+   "c": "scenery",
+   "n": "沙漠日出",
+   "ns": "沙漠日出",
+   "ne": "Desert Sunrise"
+  },
+  {
+   "f": "bg187.jpg",
+   "t": "bg187s.jpg",
+   "c": "scenery",
+   "n": "峽灣瀑布",
+   "ns": "峡湾瀑布",
+   "ne": "Fjord Waterfalls"
+  },
+  {
+   "f": "bg188.jpg",
+   "t": "bg188s.jpg",
+   "c": "scenery",
+   "n": "海蝕拱門夕陽",
+   "ns": "海蚀拱门夕阳",
+   "ne": "Sea Arch Sunset"
+  },
+  {
+   "f": "bg189.jpg",
+   "t": "bg189s.jpg",
+   "c": "scenery",
+   "n": "竹林石徑",
+   "ns": "竹林石径",
+   "ne": "Bamboo Path"
+  },
+  {
+   "f": "bg190.jpg",
+   "t": "bg190s.jpg",
+   "c": "scenery",
+   "n": "火山湖日出",
+   "ns": "火山湖日出",
+   "ne": "Volcano Lake Sunrise"
+  },
+  {
+   "f": "bg191.jpg",
+   "t": "bg191s.jpg",
+   "c": "scenery",
+   "n": "紅岩峽谷",
+   "ns": "红岩峡谷",
+   "ne": "Red Canyon"
+  },
+  {
+   "f": "bg192.jpg",
+   "t": "bg192s.jpg",
+   "c": "scenery",
+   "n": "銀河山湖",
+   "ns": "银河山湖",
+   "ne": "Milky Way Lake"
+  },
+  {
+   "f": "bg193.jpg",
+   "t": "bg193s.jpg",
+   "c": "scenery",
+   "n": "極光冰湖",
+   "ns": "极光冰湖",
+   "ne": "Aurora Ice Lake"
+  },
+  {
+   "f": "bg194.jpg",
+   "t": "bg194s.jpg",
+   "c": "scenery",
+   "n": "雪林溪流",
+   "ns": "雪林溪流",
+   "ne": "Snowy Forest Stream"
+  },
+  {
+   "f": "bg215.jpg",
+   "t": "bg215s.jpg",
+   "c": "scenery",
+   "n": "彩色丘陵日出",
+   "ns": "彩色丘陵日出",
+   "ne": "Painted Hills Sunrise"
+  },
+  {
+   "f": "bg216.jpg",
+   "t": "bg216s.jpg",
+   "c": "scenery",
+   "n": "半圓山谷溪流",
+   "ns": "半圆山谷溪流",
+   "ne": "Valley Stream"
+  },
+  {
+   "f": "bg217.jpg",
+   "t": "bg217s.jpg",
+   "c": "scenery",
+   "n": "白沙丘暮色",
+   "ns": "白沙丘暮色",
+   "ne": "White Sand Dunes"
+  },
+  {
+   "f": "bg218.jpg",
+   "t": "bg218s.jpg",
+   "c": "scenery",
+   "n": "雨林天坑",
+   "ns": "雨林天坑",
+   "ne": "Rainforest Sinkhole"
+  },
+  {
+   "f": "bg219.jpg",
+   "t": "bg219s.jpg",
+   "c": "scenery",
+   "n": "金色峽谷花海",
+   "ns": "金色峡谷花海",
+   "ne": "Golden Canyon"
+  },
+  {
+   "f": "bg220.jpg",
+   "t": "bg220s.jpg",
+   "c": "scenery",
+   "n": "圓石海灘日落",
+   "ns": "圆石海滩日落",
+   "ne": "Boulder Beach Sunset"
+  },
+  {
+   "f": "bg221.jpg",
+   "t": "bg221s.jpg",
+   "c": "scenery",
+   "n": "荷塘晨曦",
+   "ns": "荷塘晨曦",
+   "ne": "Lotus Pond Dawn"
+  },
+  {
+   "f": "bg222.jpg",
+   "t": "bg222s.jpg",
+   "c": "scenery",
+   "n": "冰晶黑沙灘",
+   "ns": "冰晶黑沙滩",
+   "ne": "Ice on Black Sand"
+  },
+  {
+   "f": "bg223.jpg",
+   "t": "bg223s.jpg",
+   "c": "scenery",
+   "n": "紅鹽角草濕地",
+   "ns": "红盐角草湿地",
+   "ne": "Red Salt Marsh"
+  },
+  {
+   "f": "bg224.jpg",
+   "t": "bg224s.jpg",
+   "c": "scenery",
+   "n": "雨林階梯瀑布",
+   "ns": "雨林阶梯瀑布",
+   "ne": "Rainforest Cascades"
+  },
+  {
+   "f": "bg135.jpg",
+   "t": "bg135s.jpg",
+   "c": "cats",
+   "n": "奶油布偶貓與玫瑰",
+   "ns": "奶油布偶猫与玫瑰",
+   "ne": "Cream Kitten & Roses"
+  },
+  {
+   "f": "bg136.jpg",
+   "t": "bg136s.jpg",
+   "c": "cats",
+   "n": "橘白小貓雛菊籃",
+   "ns": "橘白小猫雏菊篮",
+   "ne": "Orange Kitten in Daisies"
+  },
+  {
+   "f": "bg137.jpg",
+   "t": "bg137s.jpg",
+   "c": "cats",
+   "n": "三花貓與鬱金香",
+   "ns": "三花猫与郁金香",
+   "ne": "Calico & Tulips"
+  },
+  {
+   "f": "bg60.jpg",
+   "t": "bg60s.jpg",
+   "c": "cakes",
+   "n": "紫夜星空蛋糕",
+   "ns": "紫夜星空蛋糕",
+   "ne": "Starry Night Cake"
+  },
+  {
+   "f": "bg61.jpg",
+   "t": "bg61s.jpg",
+   "c": "cakes",
+   "n": "蜂蜜小熊蛋糕",
+   "ns": "蜂蜜小熊蛋糕",
+   "ne": "Honey Bear Cake"
+  },
+  {
+   "f": "bg62.jpg",
+   "t": "bg62s.jpg",
+   "c": "cakes",
+   "n": "彩虹糖果蛋糕",
+   "ns": "彩虹糖果蛋糕",
+   "ne": "Rainbow Candy Cake"
+  },
+  {
+   "f": "bg63.jpg",
+   "t": "bg63s.jpg",
+   "c": "cakes",
+   "n": "金色三層蛋糕",
+   "ns": "金色三层蛋糕",
+   "ne": "Golden Tiered Cake"
+  },
+  {
+   "f": "bg64.jpg",
+   "t": "bg64s.jpg",
+   "c": "cakes",
+   "n": "檸檬花園蛋糕",
+   "ns": "柠檬花园蛋糕",
+   "ne": "Lemon Garden Cake"
+  },
+  {
+   "f": "bg65.jpg",
+   "t": "bg65s.jpg",
+   "c": "cakes",
+   "n": "冬雪白巧蛋糕",
+   "ns": "冬雪白巧蛋糕",
+   "ne": "Winter White Cake"
+  },
+  {
+   "f": "bg66.jpg",
+   "t": "bg66s.jpg",
+   "c": "cakes",
+   "n": "焦糖核桃蛋糕",
+   "ns": "焦糖核桃蛋糕",
+   "ne": "Caramel Walnut Cake"
+  },
+  {
+   "f": "bg67.jpg",
+   "t": "bg67s.jpg",
+   "c": "cakes",
+   "n": "芒果蛋糕",
+   "ns": "芒果蛋糕",
+   "ne": "Mango Cake"
+  },
+  {
+   "f": "bg68.jpg",
+   "t": "bg68s.jpg",
+   "c": "cakes",
+   "n": "鋼琴音符蛋糕",
+   "ns": "钢琴音符蛋糕",
+   "ne": "Piano Cake"
+  },
+  {
+   "f": "bg69.jpg",
+   "t": "bg69s.jpg",
+   "c": "cakes",
+   "n": "提拉米蘇",
+   "ns": "提拉米苏",
+   "ne": "Tiramisu"
+  },
+  {
+   "f": "bg70.jpg",
+   "t": "bg70s.jpg",
+   "c": "cakes",
+   "n": "蜜桃湖光蛋糕",
+   "ns": "蜜桃湖光蛋糕",
+   "ne": "Peach Lake Cake"
+  },
+  {
+   "f": "bg71.jpg",
+   "t": "bg71s.jpg",
+   "c": "cakes",
+   "n": "壽桃蛋糕",
+   "ns": "寿桃蛋糕",
+   "ne": "Longevity Peach Cake"
+  },
+  {
+   "f": "bg72.jpg",
+   "t": "bg72s.jpg",
+   "c": "cakes",
+   "n": "紅絲絨愛心蛋糕",
+   "ns": "红丝绒爱心蛋糕",
+   "ne": "Red Velvet Heart"
+  },
+  {
+   "f": "bg73.jpg",
+   "t": "bg73s.jpg",
+   "c": "cakes",
+   "n": "花籃蛋糕",
+   "ns": "花篮蛋糕",
+   "ne": "Flower Basket Cake"
+  },
+  {
+   "f": "bg74.jpg",
+   "t": "bg74s.jpg",
+   "c": "cakes",
+   "n": "恐龍蛋糕",
+   "ns": "恐龙蛋糕",
+   "ne": "Dinosaur Cake"
+  },
+  {
+   "f": "bg75.jpg",
+   "t": "bg75s.jpg",
+   "c": "cross",
+   "n": "橡木十架與玫瑰",
+   "ns": "橡木十架与玫瑰",
+   "ne": "Oak Cross & Roses"
+  },
+  {
+   "f": "bg76.jpg",
+   "t": "bg76s.jpg",
+   "c": "cross",
+   "n": "古樸十架與薰衣草",
+   "ns": "古朴十架与薰衣草",
+   "ne": "Rustic Cross & Lavender"
+  },
+  {
+   "f": "bg77.jpg",
+   "t": "bg77s.jpg",
+   "c": "cross",
+   "n": "紅木十架與牡丹",
+   "ns": "红木十架与牡丹",
+   "ne": "Cross & Peonies"
+  },
+  {
+   "f": "bg78.jpg",
+   "t": "bg78s.jpg",
+   "c": "cross",
+   "n": "金十字架與百合",
+   "ns": "金十字架与百合",
+   "ne": "Gold Cross & Lilies"
+  },
+  {
+   "f": "bg79.jpg",
+   "t": "bg79s.jpg",
+   "c": "cross",
+   "n": "白十字架與雛菊",
+   "ns": "白十字架与雏菊",
+   "ne": "White Cross & Daisies"
+  },
+  {
+   "f": "bg80.jpg",
+   "t": "bg80s.jpg",
+   "c": "cross",
+   "n": "十字架與紅玫瑰燭光",
+   "ns": "十字架与红玫瑰烛光",
+   "ne": "Cross, Red Roses & Candles"
+  },
+  {
+   "f": "bg81.jpg",
+   "t": "bg81s.jpg",
+   "c": "cross",
+   "n": "橡木十架與白鬱金香",
+   "ns": "橡木十架与白郁金香",
+   "ne": "Oak Cross & Tulips"
+  },
+  {
+   "f": "bg82.jpg",
+   "t": "bg82s.jpg",
+   "c": "cross",
+   "n": "白十字架與藍繡球",
+   "ns": "白十字架与蓝绣球",
+   "ne": "White Cross & Hydrangea"
+  },
+  {
+   "f": "bg83.jpg",
+   "t": "bg83s.jpg",
+   "c": "cross",
+   "n": "星空金十字架",
+   "ns": "星空金十字架",
+   "ne": "Golden Cross Under Stars"
+  },
+  {
+   "f": "bg84.jpg",
+   "t": "bg84s.jpg",
+   "c": "cross",
+   "n": "石十字架與櫻花",
+   "ns": "石十字架与樱花",
+   "ne": "Stone Cross & Blossoms"
+  },
+  {
+   "f": "bg85.jpg",
+   "t": "bg85s.jpg",
+   "c": "cross",
+   "n": "十字架與向日葵",
+   "ns": "十字架与向日葵",
+   "ne": "Cross & Sunflowers"
+  },
+  {
+   "f": "bg86.jpg",
+   "t": "bg86s.jpg",
+   "c": "cross",
+   "n": "秋日十字架",
+   "ns": "秋日十字架",
+   "ne": "Autumn Cross"
+  },
+  {
+   "f": "bg87.jpg",
+   "t": "bg87s.jpg",
+   "c": "cross",
+   "n": "十字架與粉玫瑰",
+   "ns": "十字架与粉玫瑰",
+   "ne": "Cross & Pink Roses"
+  },
+  {
+   "f": "bg88.jpg",
+   "t": "bg88s.jpg",
+   "c": "cross",
+   "n": "白十字架與洋牡丹",
+   "ns": "白十字架与洋牡丹",
+   "ne": "White Cross & Ranunculus"
+  },
+  {
+   "f": "bg89.jpg",
+   "t": "bg89s.jpg",
+   "c": "cross",
+   "n": "大理石十架與非洲菊",
+   "ns": "大理石十架与非洲菊",
+   "ne": "Marble Cross & Gerberas"
+  },
+  {
+   "f": "bg90.jpg",
+   "t": "bg90s.jpg",
+   "c": "cross",
+   "n": "金十架與蘭花日落",
+   "ns": "金十架与兰花日落",
+   "ne": "Gold Cross & Orchids"
+  },
+  {
+   "f": "bg91.jpg",
+   "t": "bg91s.jpg",
+   "c": "cross",
+   "n": "冬日白十字架",
+   "ns": "冬日白十字架",
+   "ne": "Winter White Cross"
+  },
+  {
+   "f": "bg92.jpg",
+   "t": "bg92s.jpg",
+   "c": "cross",
+   "n": "十字架與鈴蘭晨霧",
+   "ns": "十字架与铃兰晨雾",
+   "ne": "Cross & Lily of the Valley"
+  },
+  {
+   "f": "bg93.jpg",
+   "t": "bg93s.jpg",
+   "c": "cross",
+   "n": "十字架聖經與乾燥花",
+   "ns": "十字架圣经与干燥花",
+   "ne": "Cross, Bible & Dried Flowers"
+  },
+  {
+   "f": "bg94.jpg",
+   "t": "bg94s.jpg",
+   "c": "cross",
+   "n": "銅雕十字架與木蘭",
+   "ns": "铜雕十字架与木兰",
+   "ne": "Brass Cross & Magnolia"
+  },
+  {
+   "f": "bg345.jpg",
+   "t": "bg345s.jpg",
+   "c": "cross",
+   "n": "紅岩峽谷十字架",
+   "ns": "红岩峡谷十字架",
+   "ne": "Cross in the Red Canyon"
+  },
+  {
+   "f": "bg346.jpg",
+   "t": "bg346s.jpg",
+   "c": "cross",
+   "n": "冰川日落十字架",
+   "ns": "冰川日落十字架",
+   "ne": "Cross at Glacier Sunset"
+  },
+  {
+   "f": "bg347.jpg",
+   "t": "bg347s.jpg",
+   "c": "cross",
+   "n": "沙漠綠洲十字架",
+   "ns": "沙漠绿洲十字架",
+   "ne": "Cross Above the Desert Oasis"
+  },
+  {
+   "f": "bg348.jpg",
+   "t": "bg348s.jpg",
+   "c": "cross",
+   "n": "梯田晨霧十字架",
+   "ns": "梯田晨雾十字架",
+   "ne": "Cross over Misty Terraces"
+  },
+  {
+   "f": "bg349.jpg",
+   "t": "bg349s.jpg",
+   "c": "cross",
+   "n": "海浪礁岩十字架",
+   "ns": "海浪礁岩十字架",
+   "ne": "Cross by the Crashing Waves"
+  },
+  {
+   "f": "bg350.jpg",
+   "t": "bg350s.jpg",
+   "c": "cross",
+   "n": "高山花草十字架",
+   "ns": "高山花草十字架",
+   "ne": "Cross in the Alpine Meadow"
+  },
+  {
+   "f": "bg351.jpg",
+   "t": "bg351s.jpg",
+   "c": "cross",
+   "n": "紫色石楠花十字架",
+   "ns": "紫色石楠花十字架",
+   "ne": "Cross in the Heather"
+  },
+  {
+   "f": "bg352.jpg",
+   "t": "bg352s.jpg",
+   "c": "cross",
+   "n": "山水晨光十字架",
+   "ns": "山水晨光十字架",
+   "ne": "Cross by the Misty River"
+  },
+  {
+   "f": "bg353.jpg",
+   "t": "bg353s.jpg",
+   "c": "cross",
+   "n": "海岸日落十字架",
+   "ns": "海岸日落十字架",
+   "ne": "Cross at Coastal Sunset"
+  },
+  {
+   "f": "bg354.jpg",
+   "t": "bg354s.jpg",
+   "c": "cross",
+   "n": "森林溪流十字架",
+   "ns": "森林溪流十字架",
+   "ne": "Cross in the Forest Stream"
+  },
+  {
+   "f": "bg355.jpg",
+   "t": "bg355s.jpg",
+   "c": "cross",
+   "n": "鹽湖霞光十字架",
+   "ns": "盐湖霞光十字架",
+   "ne": "Cross on the Salt Flat"
+  },
+  {
+   "f": "bg356.jpg",
+   "t": "bg356s.jpg",
+   "c": "cross",
+   "n": "金秋山谷十字架",
+   "ns": "金秋山谷十字架",
+   "ne": "Cross in the Autumn Valley"
+  },
+  {
+   "f": "bg357.jpg",
+   "t": "bg357s.jpg",
+   "c": "cross",
+   "n": "白色溫泉梯池十字架",
+   "ns": "白色温泉梯池十字架",
+   "ne": "Cross at the White Terraces"
+  },
+  {
+   "f": "bg358.jpg",
+   "t": "bg358s.jpg",
+   "c": "cross",
+   "n": "峽灣十字架",
+   "ns": "峡湾十字架",
+   "ne": "Cross over the Fjord"
+  },
+  {
+   "f": "bg359.jpg",
+   "t": "bg359s.jpg",
+   "c": "cross",
+   "n": "荷花晨曦十字架",
+   "ns": "荷花晨曦十字架",
+   "ne": "Cross among the Lotus"
+  },
+  {
+   "f": "bg360.jpg",
+   "t": "bg360s.jpg",
+   "c": "cross",
+   "n": "白色懸崖雛菊十字架",
+   "ns": "白色悬崖雏菊十字架",
+   "ne": "Cross on the White Cliffs"
+  },
+  {
+   "f": "bg361.jpg",
+   "t": "bg361s.jpg",
+   "c": "cross",
+   "n": "火山湖十字架",
+   "ns": "火山湖十字架",
+   "ne": "Cross at the Crater Lake"
+  },
+  {
+   "f": "bg362.jpg",
+   "t": "bg362s.jpg",
+   "c": "cross",
+   "n": "雲海瀑布十字架",
+   "ns": "云海瀑布十字架",
+   "ne": "Cross above the Clouds and Falls"
+  },
+  {
+   "f": "bg363.jpg",
+   "t": "bg363s.jpg",
+   "c": "cross",
+   "n": "橄欖園日落十字架",
+   "ns": "橄榄园日落十字架",
+   "ne": "Cross in the Olive Grove"
+  },
+  {
+   "f": "bg364.jpg",
+   "t": "bg364s.jpg",
+   "c": "cross",
+   "n": "雪地樺林十字架",
+   "ns": "雪地桦林十字架",
+   "ne": "Cross in the Snowy Birch Forest"
+  },
+  {
+   "f": "bg95.jpg",
+   "t": "bg95s.jpg",
+   "c": "gifts",
+   "n": "粉緞帶玫瑰窗景禮盒",
+   "ns": "粉缎带玫瑰窗景礼盒",
+   "ne": "Pink Ribbon Rose Gift"
+  },
+  {
+   "f": "bg96.jpg",
+   "t": "bg96s.jpg",
+   "c": "gifts",
+   "n": "金緞帶百合圓禮盒",
+   "ns": "金缎带百合圆礼盒",
+   "ne": "Gold Ribbon Lily Gift"
+  },
+  {
+   "f": "bg97.jpg",
+   "t": "bg97s.jpg",
+   "c": "gifts",
+   "n": "雛菊麻繩禮盒",
+   "ns": "雏菊麻绳礼盒",
+   "ne": "Daisy Twine Gift"
+  },
+  {
+   "f": "bg98.jpg",
+   "t": "bg98s.jpg",
+   "c": "gifts",
+   "n": "薰衣草莊園禮盒",
+   "ns": "薰衣草庄园礼盒",
+   "ne": "Lavender Estate Gift"
+  },
+  {
+   "f": "bg99.jpg",
+   "t": "bg99s.jpg",
+   "c": "gifts",
+   "n": "鬱金香綠緞帶禮盒",
+   "ns": "郁金香绿缎带礼盒",
+   "ne": "Tulip Green Ribbon Gift"
+  },
+  {
+   "f": "bg100.jpg",
+   "t": "bg100s.jpg",
+   "c": "gifts",
+   "n": "繡球海岸藍禮盒",
+   "ns": "绣球海岸蓝礼盒",
+   "ne": "Hydrangea Coast Gift"
+  },
+  {
+   "f": "bg101.jpg",
+   "t": "bg101s.jpg",
+   "c": "gifts",
+   "n": "珊瑚牡丹禮盒",
+   "ns": "珊瑚牡丹礼盒",
+   "ne": "Coral Peony Gift"
+  },
+  {
+   "f": "bg102.jpg",
+   "t": "bg102s.jpg",
+   "c": "gifts",
+   "n": "櫻花和風禮盒",
+   "ns": "樱花和风礼盒",
+   "ne": "Cherry Blossom Gift"
+  },
+  {
+   "f": "bg103.jpg",
+   "t": "bg103s.jpg",
+   "c": "gifts",
+   "n": "向日葵黃禮盒",
+   "ns": "向日葵黄礼盒",
+   "ne": "Sunflower Gift"
+  },
+  {
+   "f": "bg104.jpg",
+   "t": "bg104s.jpg",
+   "c": "gifts",
+   "n": "絲絨紅寶石禮盒",
+   "ns": "丝绒红宝石礼盒",
+   "ne": "Red Velvet Ruby Gift"
+  },
+  {
+   "f": "bg105.jpg",
+   "t": "bg105s.jpg",
+   "c": "gifts",
+   "n": "愛心粉禮盒",
+   "ns": "爱心粉礼盒",
+   "ne": "Pink Heart Gift"
+  },
+  {
+   "f": "bg106.jpg",
+   "t": "bg106s.jpg",
+   "c": "gifts",
+   "n": "洋牡丹花紋禮盒",
+   "ns": "洋牡丹花纹礼盒",
+   "ne": "Ranunculus Gift"
+  },
+  {
+   "f": "bg107.jpg",
+   "t": "bg107s.jpg",
+   "c": "gifts",
+   "n": "藏藍金星禮盒",
+   "ns": "藏蓝金星礼盒",
+   "ne": "Navy & Gold Star Gift"
+  },
+  {
+   "f": "bg108.jpg",
+   "t": "bg108s.jpg",
+   "c": "gifts",
+   "n": "蘭花紫紗禮盒",
+   "ns": "兰花紫纱礼盒",
+   "ne": "Orchid Organza Gift"
+  },
+  {
+   "f": "bg109.jpg",
+   "t": "bg109s.jpg",
+   "c": "gifts",
+   "n": "冬日針織禮盒",
+   "ns": "冬日针织礼盒",
+   "ne": "Winter Knit Gift"
+  },
+  {
+   "f": "bg110.jpg",
+   "t": "bg110s.jpg",
+   "c": "gifts",
+   "n": "秋楓銅緞禮盒",
+   "ns": "秋枫铜缎礼盒",
+   "ne": "Autumn Copper Gift"
+  },
+  {
+   "f": "bg111.jpg",
+   "t": "bg111s.jpg",
+   "c": "gifts",
+   "n": "非洲菊點點禮盒",
+   "ns": "非洲菊点点礼盒",
+   "ne": "Gerbera Polka Gift"
+  },
+  {
+   "f": "bg112.jpg",
+   "t": "bg112s.jpg",
+   "c": "gifts",
+   "n": "鈴蘭晨光禮盒",
+   "ns": "铃兰晨光礼盒",
+   "ne": "Lily of the Valley Gift"
+  },
+  {
+   "f": "bg113.jpg",
+   "t": "bg113s.jpg",
+   "c": "gifts",
+   "n": "酒紅牛皮紙禮盒",
+   "ns": "酒红牛皮纸礼盒",
+   "ne": "Burgundy Kraft Gift"
+  },
+  {
+   "f": "bg114.jpg",
+   "t": "bg114s.jpg",
+   "c": "gifts",
+   "n": "金色木蘭禮盒",
+   "ns": "金色木兰礼盒",
+   "ne": "Golden Magnolia Gift"
+  },
+  {
+   "f": "bg138.jpg",
+   "t": "bg138s.jpg",
+   "c": "cats",
+   "n": "白波斯貓薰衣草",
+   "ns": "白波斯猫薰衣草",
+   "ne": "White Persian & Lavender"
+  },
+  {
+   "f": "bg139.jpg",
+   "t": "bg139s.jpg",
+   "c": "cats",
+   "n": "銀灰英短與繡球",
+   "ns": "银灰英短与绣球",
+   "ne": "British Shorthair & Hydrangea"
+  },
+  {
+   "f": "bg140.jpg",
+   "t": "bg140s.jpg",
+   "c": "cats",
+   "n": "布偶貓與牡丹禮盒",
+   "ns": "布偶猫与牡丹礼盒",
+   "ne": "Ragdoll & Peonies"
+  },
+  {
+   "f": "bg141.jpg",
+   "t": "bg141s.jpg",
+   "c": "cats",
+   "n": "虎斑貓與向日葵",
+   "ns": "虎斑猫与向日葵",
+   "ne": "Tabby & Sunflowers"
+  },
+  {
+   "f": "bg142.jpg",
+   "t": "bg142s.jpg",
+   "c": "cats",
+   "n": "雨窗相擁小貓",
+   "ns": "雨窗相拥小猫",
+   "ne": "Cuddling Kittens by the Window"
+  },
+  {
+   "f": "bg143.jpg",
+   "t": "bg143s.jpg",
+   "c": "cats",
+   "n": "橘貓秋日籃",
+   "ns": "橘猫秋日篮",
+   "ne": "Orange Kitten in Autumn"
+  },
+  {
+   "f": "bg144.jpg",
+   "t": "bg144s.jpg",
+   "c": "cats",
+   "n": "暹羅貓湖畔",
+   "ns": "暹罗猫湖畔",
+   "ne": "Siamese by the Lake"
+  },
+  {
+   "f": "bg145.jpg",
+   "t": "bg145s.jpg",
+   "c": "cats",
+   "n": "黑貓與白玫瑰珍珠",
+   "ns": "黑猫与白玫瑰珍珠",
+   "ne": "Black Cat & White Roses"
+  },
+  {
+   "f": "bg146.jpg",
+   "t": "bg146s.jpg",
+   "c": "cats",
+   "n": "藍白長毛貓海岸",
+   "ns": "蓝白长毛猫海岸",
+   "ne": "Fluffy Cat by the Sea"
+  },
+  {
+   "f": "bg147.jpg",
+   "t": "bg147s.jpg",
+   "c": "cats",
+   "n": "雙胞胎小貓與櫻花",
+   "ns": "双胞胎小猫与樱花",
+   "ne": "Twin Kittens & Cherry Blossoms"
+  },
+  {
+   "f": "bg148.jpg",
+   "t": "bg148s.jpg",
+   "c": "cats",
+   "n": "紅圍巾小貓雪窗",
+   "ns": "红围巾小猫雪窗",
+   "ne": "Kitten in Red Scarf"
+  },
+  {
+   "f": "bg149.jpg",
+   "t": "bg149s.jpg",
+   "c": "cats",
+   "n": "虎斑小貓與書",
+   "ns": "虎斑小猫与书",
+   "ne": "Tabby Kitten & Book"
+  },
+  {
+   "f": "bg150.jpg",
+   "t": "bg150s.jpg",
+   "c": "cats",
+   "n": "三花小貓雛菊田",
+   "ns": "三花小猫雏菊田",
+   "ne": "Calico Kitten in Daisies"
+  },
+  {
+   "f": "bg151.jpg",
+   "t": "bg151s.jpg",
+   "c": "cats",
+   "n": "橘白小貓與愛心",
+   "ns": "橘白小猫与爱心",
+   "ne": "Kitten & Heart"
+  },
+  {
+   "f": "bg152.jpg",
+   "t": "bg152s.jpg",
+   "c": "cats",
+   "n": "布偶貓與風信子",
+   "ns": "布偶猫与风信子",
+   "ne": "Ragdoll & Hyacinths"
+  },
+  {
+   "f": "bg153.jpg",
+   "t": "bg153s.jpg",
+   "c": "cats",
+   "n": "白貓媽媽與小貓玫瑰園",
+   "ns": "白猫妈妈与小猫玫瑰园",
+   "ne": "Mama Cat & Kitten in Roses"
+  },
+  {
+   "f": "bg154.jpg",
+   "t": "bg154s.jpg",
+   "c": "cats",
+   "n": "金吉拉日出湖畔",
+   "ns": "金吉拉日出湖畔",
+   "ne": "Golden Cat at Sunrise"
+  },
+  {
+   "f": "bg245.jpg",
+   "t": "bg245s.jpg",
+   "c": "cats",
+   "n": "西伯利亞貓與蘭花溫室",
+   "ns": "西伯利亚猫与兰花温室",
+   "ne": "Siberian Cat in Orchid Greenhouse"
+  },
+  {
+   "f": "bg246.jpg",
+   "t": "bg246s.jpg",
+   "c": "cats",
+   "n": "阿比西尼亞貓與噴泉夕陽",
+   "ns": "阿比西尼亚猫与喷泉夕阳",
+   "ne": "Abyssinian at Fountain Sunset"
+  },
+  {
+   "f": "bg247.jpg",
+   "t": "bg247s.jpg",
+   "c": "cats",
+   "n": "緬因貓與紫藤花架",
+   "ns": "缅因猫与紫藤花架",
+   "ne": "Maine Coon Under Wisteria"
+  },
+  {
+   "f": "bg248.jpg",
+   "t": "bg248s.jpg",
+   "c": "cats",
+   "n": "挪威森林貓與湖畔晨曦",
+   "ns": "挪威森林猫与湖畔晨曦",
+   "ne": "Norwegian Forest Cat at Lake Dawn"
+  },
+  {
+   "f": "bg249.jpg",
+   "t": "bg249s.jpg",
+   "c": "cats",
+   "n": "白貓與鬱金香花瓣",
+   "ns": "白猫与郁金香花瓣",
+   "ne": "White Cat & Tulip Petals"
+  },
+  {
+   "f": "bg250.jpg",
+   "t": "bg250s.jpg",
+   "c": "cats",
+   "n": "俄羅斯藍貓與青花瓷窗景",
+   "ns": "俄罗斯蓝猫与青花瓷窗景",
+   "ne": "Russian Blue by the Harbor Window"
+  },
+  {
+   "f": "bg251.jpg",
+   "t": "bg251s.jpg",
+   "c": "cats",
+   "n": "孟加拉貓雨林小橋",
+   "ns": "孟加拉猫雨林小桥",
+   "ne": "Bengal Cat on Rainforest Bridge"
+  },
+  {
+   "f": "bg252.jpg",
+   "t": "bg252s.jpg",
+   "c": "cats",
+   "n": "埃及貓與蓮花池",
+   "ns": "埃及猫与莲花池",
+   "ne": "Egyptian Mau & Lotus Pond"
+  },
+  {
+   "f": "bg253.jpg",
+   "t": "bg253s.jpg",
+   "c": "cats",
+   "n": "索馬利貓與紅岩峽谷",
+   "ns": "索马里猫与红岩峡谷",
+   "ne": "Somali Cat at Red Canyon"
+  },
+  {
+   "f": "bg254.jpg",
+   "t": "bg254s.jpg",
+   "c": "cats",
+   "n": "土耳其梵貓與帆船夕陽",
+   "ns": "土耳其梵猫与帆船夕阳",
+   "ne": "Turkish Van on a Boat"
+  },
+  {
+   "f": "bg255.jpg",
+   "t": "bg255s.jpg",
+   "c": "cats",
+   "n": "康沃爾捲毛貓與海港窗台",
+   "ns": "康沃尔卷毛猫与海港窗台",
+   "ne": "Cornish Rex at Harbor Window"
+  },
+  {
+   "f": "bg256.jpg",
+   "t": "bg256s.jpg",
+   "c": "cats",
+   "n": "德文捲毛貓與星空望遠鏡",
+   "ns": "德文卷毛猫与星空望远镜",
+   "ne": "Devon Rex & Starry Telescope"
+  },
+  {
+   "f": "bg257.jpg",
+   "t": "bg257s.jpg",
+   "c": "cats",
+   "n": "奧西貓與陶藝工坊",
+   "ns": "奥西猫与陶艺工坊",
+   "ne": "Ocicat in Pottery Studio"
+  },
+  {
+   "f": "bg258.jpg",
+   "t": "bg258s.jpg",
+   "c": "cats",
+   "n": "緬甸貓與荷塘燈籠",
+   "ns": "缅甸猫与荷塘灯笼",
+   "ne": "Burmese at Lotus Pond"
+  },
+  {
+   "f": "bg259.jpg",
+   "t": "bg259s.jpg",
+   "c": "cats",
+   "n": "新加坡貓與蘭花涼亭",
+   "ns": "新加坡猫与兰花凉亭",
+   "ne": "Singapura & Orchid Pavilion"
+  },
+  {
+   "f": "bg260.jpg",
+   "t": "bg260s.jpg",
+   "c": "cats",
+   "n": "塞爾凱克捲毛貓與雲海",
+   "ns": "塞尔凯克卷毛猫与云海",
+   "ne": "Selkirk Rex Above the Clouds"
+  },
+  {
+   "f": "bg261.jpg",
+   "t": "bg261s.jpg",
+   "c": "cats",
+   "n": "英短藍貓與香草花園",
+   "ns": "英短蓝猫与香草花园",
+   "ne": "British Blue & Herb Garden"
+  },
+  {
+   "f": "bg262.jpg",
+   "t": "bg262s.jpg",
+   "c": "cats",
+   "n": "英短銀漸層與冰河窗景",
+   "ns": "英短银渐层与冰河窗景",
+   "ne": "Silver British Shorthair & Glacier"
+  },
+  {
+   "f": "bg263.jpg",
+   "t": "bg263s.jpg",
+   "c": "cats",
+   "n": "日本短尾貓與楓紅庭園",
+   "ns": "日本短尾猫与枫红庭园",
+   "ne": "Japanese Bobtail & Maple Garden"
+  },
+  {
+   "f": "bg264.jpg",
+   "t": "bg264s.jpg",
+   "c": "cats",
+   "n": "美國捲耳貓與熱氣球",
+   "ns": "美国卷耳猫与热气球",
+   "ne": "American Curl & Balloons"
+  },
+  {
+   "f": "bg115.jpg",
+   "t": "bg115s.jpg",
+   "c": "dogs",
+   "n": "黃金獵犬幼犬與玫瑰",
+   "ns": "黄金猎犬幼犬与玫瑰",
+   "ne": "Golden Puppy & Roses"
+  },
+  {
+   "f": "bg116.jpg",
+   "t": "bg116s.jpg",
+   "c": "dogs",
+   "n": "貴賓狗與薰衣草",
+   "ns": "贵宾狗与薰衣草",
+   "ne": "Poodle & Lavender"
+  },
+  {
+   "f": "bg117.jpg",
+   "t": "bg117s.jpg",
+   "c": "dogs",
+   "n": "白博美與繡球",
+   "ns": "白博美与绣球",
+   "ne": "Pomeranian & Hydrangea"
+  },
+  {
+   "f": "bg118.jpg",
+   "t": "bg118s.jpg",
+   "c": "dogs",
+   "n": "柯基與雛菊花籃",
+   "ns": "柯基与雏菊花篮",
+   "ne": "Corgi & Daisy Basket"
+  },
+  {
+   "f": "bg119.jpg",
+   "t": "bg119s.jpg",
+   "c": "dogs",
+   "n": "柴犬與向日葵",
+   "ns": "柴犬与向日葵",
+   "ne": "Shiba & Sunflowers"
+  },
+  {
+   "f": "bg120.jpg",
+   "t": "bg120s.jpg",
+   "c": "dogs",
+   "n": "雨窗小拉布拉多",
+   "ns": "雨窗小拉布拉多",
+   "ne": "Sleepy Labs by the Window"
+  },
+  {
+   "f": "bg121.jpg",
+   "t": "bg121s.jpg",
+   "c": "dogs",
+   "n": "米格魯與鬱金香",
+   "ns": "米格鲁与郁金香",
+   "ne": "Beagle & Tulips"
+  },
+  {
+   "f": "bg122.jpg",
+   "t": "bg122s.jpg",
+   "c": "dogs",
+   "n": "邊境牧羊犬湖畔",
+   "ns": "边境牧羊犬湖畔",
+   "ne": "Border Collie by the Lake"
+  },
+  {
+   "f": "bg123.jpg",
+   "t": "bg123s.jpg",
+   "c": "dogs",
+   "n": "黑拉布拉多與白玫瑰",
+   "ns": "黑拉布拉多与白玫瑰",
+   "ne": "Black Lab & White Roses"
+  },
+  {
+   "f": "bg124.jpg",
+   "t": "bg124s.jpg",
+   "c": "dogs",
+   "n": "約克夏與牡丹",
+   "ns": "约克夏与牡丹",
+   "ne": "Yorkie & Peonies"
+  },
+  {
+   "f": "bg125.jpg",
+   "t": "bg125s.jpg",
+   "c": "dogs",
+   "n": "雙胞胎黃金獵犬與櫻花",
+   "ns": "双胞胎黄金猎犬与樱花",
+   "ne": "Golden Pups & Cherry Blossoms"
+  },
+  {
+   "f": "bg126.jpg",
+   "t": "bg126s.jpg",
+   "c": "dogs",
+   "n": "薩摩耶與紅圍巾",
+   "ns": "萨摩耶与红围巾",
+   "ne": "Samoyed in Red Scarf"
+  },
+  {
+   "f": "bg127.jpg",
+   "t": "bg127s.jpg",
+   "c": "dogs",
+   "n": "騎士查理王小獵犬秋日",
+   "ns": "骑士查理王小猎犬秋日",
+   "ne": "Cavalier in Autumn"
+  },
+  {
+   "f": "bg128.jpg",
+   "t": "bg128s.jpg",
+   "c": "dogs",
+   "n": "瑪爾濟斯與雛菊田",
+   "ns": "玛尔济斯与雏菊田",
+   "ne": "Maltese in Daisies"
+  },
+  {
+   "f": "bg129.jpg",
+   "t": "bg129s.jpg",
+   "c": "dogs",
+   "n": "臘腸狗與愛心",
+   "ns": "腊肠狗与爱心",
+   "ne": "Dachshund & Heart"
+  },
+  {
+   "f": "bg130.jpg",
+   "t": "bg130s.jpg",
+   "c": "dogs",
+   "n": "哈士奇海岸",
+   "ns": "哈士奇海岸",
+   "ne": "Husky by the Sea"
+  },
+  {
+   "f": "bg131.jpg",
+   "t": "bg131s.jpg",
+   "c": "dogs",
+   "n": "大狗與小狗玫瑰園",
+   "ns": "大狗与小狗玫瑰园",
+   "ne": "Big & Little Pup in Roses"
+  },
+  {
+   "f": "bg132.jpg",
+   "t": "bg132s.jpg",
+   "c": "dogs",
+   "n": "比熊與紫花",
+   "ns": "比熊与紫花",
+   "ne": "Bichon & Purple Flowers"
+  },
+  {
+   "f": "bg133.jpg",
+   "t": "bg133s.jpg",
+   "c": "dogs",
+   "n": "哈巴狗與書",
+   "ns": "哈巴狗与书",
+   "ne": "Pug & Book"
+  },
+  {
+   "f": "bg134.jpg",
+   "t": "bg134s.jpg",
+   "c": "dogs",
+   "n": "可卡獵犬日落",
+   "ns": "可卡猎犬日落",
+   "ne": "Cocker Spaniel at Sunset"
+  },
+  {
+   "f": "bg265.jpg",
+   "t": "bg265s.jpg",
+   "c": "dogs",
+   "n": "斑點狗與聖島白屋",
+   "ns": "斑点狗与圣岛白屋",
+   "ne": "Dalmatian in Santorini"
+  },
+  {
+   "f": "bg266.jpg",
+   "t": "bg266s.jpg",
+   "c": "dogs",
+   "n": "愛爾蘭長毛獵犬與楓紅石橋",
+   "ns": "爱尔兰长毛猎犬与枫红石桥",
+   "ne": "Irish Setter & Maple Bridge"
+  },
+  {
+   "f": "bg267.jpg",
+   "t": "bg267s.jpg",
+   "c": "dogs",
+   "n": "義大利靈緹與托斯卡尼",
+   "ns": "意大利灵缇与托斯卡尼",
+   "ne": "Italian Greyhound in Tuscany"
+  },
+  {
+   "f": "bg268.jpg",
+   "t": "bg268s.jpg",
+   "c": "dogs",
+   "n": "蝴蝶犬與繡球花湖畔",
+   "ns": "蝴蝶犬与绣球花湖畔",
+   "ne": "Papillon & Hydrangeas"
+  },
+  {
+   "f": "bg269.jpg",
+   "t": "bg269s.jpg",
+   "c": "dogs",
+   "n": "凱利藍㹴與海崖花草",
+   "ns": "凯利蓝㹴与海崖花草",
+   "ne": "Kerry Blue Terrier on the Cliffs"
+  },
+  {
+   "f": "bg270.jpg",
+   "t": "bg270s.jpg",
+   "c": "dogs",
+   "n": "芬蘭拉普犬與極光",
+   "ns": "芬兰拉普犬与极光",
+   "ne": "Finnish Lapphund & Aurora"
+  },
+  {
+   "f": "bg271.jpg",
+   "t": "bg271s.jpg",
+   "c": "dogs",
+   "n": "秋田犬與銀杏古街",
+   "ns": "秋田犬与银杏古街",
+   "ne": "Akita & Ginkgo Street"
+  },
+  {
+   "f": "bg272.jpg",
+   "t": "bg272s.jpg",
+   "c": "dogs",
+   "n": "大白熊犬與薰衣草山城",
+   "ns": "大白熊犬与薰衣草山城",
+   "ne": "Great Pyrenees & Lavender"
+  },
+  {
+   "f": "bg273.jpg",
+   "t": "bg273s.jpg",
+   "c": "dogs",
+   "n": "紐芬蘭犬與湖畔碼頭",
+   "ns": "纽芬兰犬与湖畔码头",
+   "ne": "Newfoundland at the Dock"
+  },
+  {
+   "f": "bg274.jpg",
+   "t": "bg274s.jpg",
+   "c": "dogs",
+   "n": "古代牧羊犬與水車鳶尾",
+   "ns": "古代牧羊犬与水车鸢尾",
+   "ne": "Old English Sheepdog & Mill"
+  },
+  {
+   "f": "bg275.jpg",
+   "t": "bg275s.jpg",
+   "c": "dogs",
+   "n": "威瑪獵犬與白樺晨霧",
+   "ns": "威玛猎犬与白桦晨雾",
+   "ne": "Weimaraner in Birch Mist"
+  },
+  {
+   "f": "bg276.jpg",
+   "t": "bg276s.jpg",
+   "c": "dogs",
+   "n": "維茲拉犬與向日葵風車",
+   "ns": "维兹拉犬与向日葵风车",
+   "ne": "Vizsla & Sunflowers"
+  },
+  {
+   "f": "bg277.jpg",
+   "t": "bg277s.jpg",
+   "c": "dogs",
+   "n": "羅德西亞背脊犬與紅岩峽谷",
+   "ns": "罗德西亚背脊犬与红岩峡谷",
+   "ne": "Rhodesian Ridgeback & Canyon"
+  },
+  {
+   "f": "bg278.jpg",
+   "t": "bg278s.jpg",
+   "c": "dogs",
+   "n": "巴辛吉犬與非洲草原",
+   "ns": "巴辛吉犬与非洲草原",
+   "ne": "Basenji on the Savanna"
+  },
+  {
+   "f": "bg279.jpg",
+   "t": "bg279s.jpg",
+   "c": "dogs",
+   "n": "蘇格蘭㹴與書房古堡",
+   "ns": "苏格兰㹴与书房古堡",
+   "ne": "Scottish Terrier in the Library"
+  },
+  {
+   "f": "bg280.jpg",
+   "t": "bg280s.jpg",
+   "c": "dogs",
+   "n": "西高地白㹴與海港小屋",
+   "ns": "西高地白㹴与海港小屋",
+   "ne": "Westie at the Harbor"
+  },
+  {
+   "f": "bg281.jpg",
+   "t": "bg281s.jpg",
+   "c": "dogs",
+   "n": "伯恩山犬與阿爾卑斯花海",
+   "ns": "伯恩山犬与阿尔卑斯花海",
+   "ne": "Bernese in Alpine Meadow"
+  },
+  {
+   "f": "bg282.jpg",
+   "t": "bg282s.jpg",
+   "c": "dogs",
+   "n": "喜樂蒂牧羊犬與石楠城堡",
+   "ns": "喜乐蒂牧羊犬与石楠城堡",
+   "ne": "Sheltie & Heather Castle"
+  },
+  {
+   "f": "bg283.jpg",
+   "t": "bg283s.jpg",
+   "c": "dogs",
+   "n": "澳洲牧羊犬與秋日葡萄園",
+   "ns": "澳洲牧羊犬与秋日葡萄园",
+   "ne": "Aussie in Autumn Vineyard"
+  },
+  {
+   "f": "bg284.jpg",
+   "t": "bg284s.jpg",
+   "c": "dogs",
+   "n": "阿富汗獵犬與玫瑰露台",
+   "ns": "阿富汗猎犬与玫瑰露台",
+   "ne": "Afghan Hound & Roses"
+  },
+  {
+   "f": "bg155.jpg",
+   "t": "bg155s.jpg",
+   "c": "gifts",
+   "n": "粉玫瑰燭光木心",
+   "ns": "粉玫瑰烛光木心",
+   "ne": "Pink Roses, Candle & Heart"
+  },
+  {
+   "f": "bg156.jpg",
+   "t": "bg156s.jpg",
+   "c": "gifts",
+   "n": "奶白玫瑰花瓶",
+   "ns": "奶白玫瑰花瓶",
+   "ne": "Cream Roses Vase"
+  },
+  {
+   "f": "bg157.jpg",
+   "t": "bg157s.jpg",
+   "c": "gifts",
+   "n": "粉鬱金香愛心盒",
+   "ns": "粉郁金香爱心盒",
+   "ne": "Tulips & Heart Box"
+  },
+  {
+   "f": "bg158.jpg",
+   "t": "bg158s.jpg",
+   "c": "gifts",
+   "n": "洋甘菊暖茶",
+   "ns": "洋甘菊暖茶",
+   "ne": "Chamomile Tea"
+  },
+  {
+   "f": "bg159.jpg",
+   "t": "bg159s.jpg",
+   "c": "gifts",
+   "n": "粉牡丹雙木心",
+   "ns": "粉牡丹双木心",
+   "ne": "Peony & Wooden Hearts"
+  },
+  {
+   "f": "bg160.jpg",
+   "t": "bg160s.jpg",
+   "c": "gifts",
+   "n": "薰衣草白瓷壺",
+   "ns": "薰衣草白瓷壶",
+   "ne": "Lavender Pitcher"
+  },
+  {
+   "f": "bg161.jpg",
+   "t": "bg161s.jpg",
+   "c": "gifts",
+   "n": "繡球玻璃愛心海景",
+   "ns": "绣球玻璃爱心海景",
+   "ne": "Hydrangea & Glass Heart"
+  },
+  {
+   "f": "bg162.jpg",
+   "t": "bg162s.jpg",
+   "c": "gifts",
+   "n": "向日葵愛心抱枕",
+   "ns": "向日葵爱心抱枕",
+   "ne": "Sunflowers & Heart Pillow"
+  },
+  {
+   "f": "bg163.jpg",
+   "t": "bg163s.jpg",
+   "c": "gifts",
+   "n": "康乃馨珍珠愛心",
+   "ns": "康乃馨珍珠爱心",
+   "ne": "Carnations & Pearl Heart"
+  },
+  {
+   "f": "bg164.jpg",
+   "t": "bg164s.jpg",
+   "c": "gifts",
+   "n": "風信子與信封",
+   "ns": "风信子与信封",
+   "ne": "Hyacinth & Letters"
+  },
+  {
+   "f": "bg165.jpg",
+   "t": "bg165s.jpg",
+   "c": "gifts",
+   "n": "非洲菊牛皮紙花束",
+   "ns": "非洲菊牛皮纸花束",
+   "ne": "Gerberas & Kraft Gift"
+  },
+  {
+   "f": "bg166.jpg",
+   "t": "bg166s.jpg",
+   "c": "gifts",
+   "n": "百合十字架與聖經",
+   "ns": "百合十字架与圣经",
+   "ne": "Lilies, Cross & Bible"
+  },
+  {
+   "f": "bg167.jpg",
+   "t": "bg167s.jpg",
+   "c": "gifts",
+   "n": "櫻花水晶愛心",
+   "ns": "樱花水晶爱心",
+   "ne": "Cherry Blossom & Crystal Heart"
+  },
+  {
+   "f": "bg168.jpg",
+   "t": "bg168s.jpg",
+   "c": "gifts",
+   "n": "鈴蘭花籃",
+   "ns": "铃兰花篮",
+   "ne": "Lily of the Valley Basket"
+  },
+  {
+   "f": "bg169.jpg",
+   "t": "bg169s.jpg",
+   "c": "gifts",
+   "n": "紅玫瑰日落露台",
+   "ns": "红玫瑰日落露台",
+   "ne": "Red Roses at Sunset"
+  },
+  {
+   "f": "bg170.jpg",
+   "t": "bg170s.jpg",
+   "c": "gifts",
+   "n": "白蝴蝶蘭愛心",
+   "ns": "白蝴蝶兰爱心",
+   "ne": "White Orchids & Heart"
+  },
+  {
+   "f": "bg171.jpg",
+   "t": "bg171s.jpg",
+   "c": "gifts",
+   "n": "大麗花秋日暖茶",
+   "ns": "大丽花秋日暖茶",
+   "ne": "Dahlias & Autumn Tea"
+  },
+  {
+   "f": "bg172.jpg",
+   "t": "bg172s.jpg",
+   "c": "gifts",
+   "n": "洋牡丹銀色項鍊盒",
+   "ns": "洋牡丹银色项链盒",
+   "ne": "Ranunculus & Locket"
+  },
+  {
+   "f": "bg173.jpg",
+   "t": "bg173s.jpg",
+   "c": "gifts",
+   "n": "日出花束雙愛心",
+   "ns": "日出花束双爱心",
+   "ne": "Sunrise Bouquet & Hearts"
+  },
+  {
+   "f": "bg174.jpg",
+   "t": "bg174s.jpg",
+   "c": "gifts",
+   "n": "紫粉花環木心",
+   "ns": "紫粉花环木心",
+   "ne": "Heart Wreath"
+  }
+ ],
+ "cats": [
+  {
+   "id": "bible",
+   "n": "聖經故事",
+   "ns": "圣经故事",
+   "ne": "Bible Stories"
+  },
+  {
+   "id": "scenery",
+   "n": "風景",
+   "ns": "风景",
+   "ne": "Scenery"
+  },
+  {
+   "id": "cross",
+   "n": "十字架",
+   "ns": "十字架",
+   "ne": "Cross"
+  },
+  {
+   "id": "cats",
+   "n": "貓咪",
+   "ns": "猫咪",
+   "ne": "Cats"
+  },
+  {
+   "id": "dogs",
+   "n": "狗狗",
+   "ns": "狗狗",
+   "ne": "Dogs"
+  },
+  {
+   "id": "gifts",
+   "n": "禮物",
+   "ns": "礼物",
+   "ne": "Gifts"
+  },
+  {
+   "id": "cakes",
+   "n": "蛋糕",
+   "ns": "蛋糕",
+   "ne": "Cakes"
+  }
+ ]
+}
