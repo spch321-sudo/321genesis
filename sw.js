@@ -1,10 +1,10 @@
-/* 321創世記講義 Service Worker  v1.1.202610130937
+/* 321創世記講義 Service Worker  v1.1.202610131005
    · 新版裝好後停在 waiting，等頁面上「有新版本了」那條按下去（SKIP_WAITING）才換——
      正在讀經、寫領受時不會被強制重整（與頁面的 UI321.update 配合）
    · 網頁、程式、資料：網路優先（cache:'no-cache'），離線才用快取
    · 圖片等其他同源資源：快取優先
    · 音訊、影片、帶 Range 的請求、以及跨網域（小智、語音、圖庫、詩歌庫）一律不攔 */
-const VER = '1.1.202610130937';
+const VER = '1.1.202610131005';
 const CACHE = 'gn321-' + VER;
 const SHELL = ['./', './index.html', './en.html'];
 

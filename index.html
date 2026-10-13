@@ -1920,8 +1920,8 @@ var GX = (function () {
     const k = alen();
     if (k !== 'mid') {
       s += (EN ? '\n\n[Length]' : '\n\n【回答長度】') + GXD.len[k] +
-        T('（這一條長度要求優先於上面「回應精簡」的原則；仍然遵守「回答格式」那幾條朗讀規矩：不用 Markdown 記號、不用表格，小標題就用一句短句自成一段。）',
-          ' (This length request overrides the earlier instruction to keep answers short; still follow the answer-format rules for reading aloud: no Markdown symbols, no tables; a heading is just a short line of its own.)');
+        T('（這一條長度要求優先於上面「回應精簡」的原則；仍然照上面的「回答格式」排版。）',
+          ' (This length request overrides the earlier instruction to keep answers short; still follow the answer-format rules above.)');
     }
     if (isSC()) s += '\n\n【語言】這位讀者使用简体中文，請一律用简体中文回答。';
     return s;
@@ -2484,6 +2484,29 @@ ${st}請用繁體中文。只回傳 JSON，不要任何說明、不要 markdown 
 
   /* ── 樣式 ─────────────────────────────────────────────────────── */
   const CSS = `
+.xzm,.xzhi,.xzsv{font-size:calc(var(--fs,17px)*.88)}
+.xzmore{font-size:calc(var(--fs,17px)*.76)}
+.xzact button{font-size:calc(var(--fs,17px)*.74)}
+.xzq button{font-size:calc(var(--fs,17px)*.85)}
+.xzf input{font-size:max(16px,calc(var(--fs,17px)*.94))}
+.xzh b{font-size:calc(var(--fs,17px)*1.0)}
+.xzt .narh{font-size:1.04em}.xzt .narh.sm{font-size:.98em}
+.gxsm,.gxlen button,.gxa{font-size:calc(var(--fs,17px)*.75)}
+.xzm.assistant .xzt{line-height:1.9;letter-spacing:.01em}
+.xzt p{margin:0 0 .75em}.xzt p:last-child{margin-bottom:0}
+.xzt .narh{font-family:var(--serif);font-weight:700;color:var(--pine);margin:1.1em 0 .45em;padding:0 0 0 .6em;border-left:3px solid var(--brass);line-height:1.5}
+.xzt .narh:first-child{margin-top:.1em}
+.xzt blockquote.narq{margin:.8em 0;padding:.6em .9em;border-left:3px solid var(--brass);background:var(--mk-note-bg,rgba(156,107,24,.08));border-radius:0 10px 10px 0;font-family:var(--serif);font-size:1.02em;line-height:1.85}
+.xzt ul.narl,.xzt ol.narl{margin:.4em 0 .8em;padding-left:1.4em}
+.xzt .narl li{margin:.3em 0;padding-left:.15em}
+.xzt .narl li::marker{color:var(--brass);font-weight:700}
+.xzt b{color:var(--pine);font-weight:700}
+.xzt .nartw{margin:.6em 0 .9em;overflow-x:auto;border-radius:10px;border:1px solid var(--line)}
+.xzt table.nart{border-collapse:collapse;width:100%;font-size:.93em;line-height:1.6}
+.xzt table.nart th,.xzt table.nart td{border-bottom:1px solid var(--line);padding:.45em .7em;text-align:left;vertical-align:top}
+.xzt table.nart th{background:var(--mk-note-bg,rgba(156,107,24,.08));color:var(--pine);font-weight:700}
+.xzt table.nart tr:last-child td{border-bottom:0}
+.xzm.assistant{padding-top:14px;padding-bottom:12px}
 .xzctl{padding:6px 14px 8px;border-bottom:1px solid var(--line)}
 .gxrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .gxsm{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:4px 11px;font:inherit;font-size:12.5px;white-space:nowrap;cursor:pointer}
@@ -2680,7 +2703,6 @@ var GXS = (function () {
     if (!SIZES[g.size]) g.size = 'p';
     if (!BORDERS.some(b => b[0] === g.border)) g.border = 'none';
     if (!(+g.fs >= .85 && +g.fs <= 1.8)) g.fs = 1.45;
-    if (['bg', 'full'].indexOf(g.mode) < 0) g.mode = 'full';
     if (g.to == null) g.to = DEF_TO();
     if (g.top == null) g.top = '';
     if (g.sign == null) g.sign = '';
@@ -2698,7 +2720,6 @@ var GXS = (function () {
   /* ── 工作室狀態（這一次） ── */
   let item = null;           // { t, ref, n0, plain }
   let note = '';             // 內文
-  let photo = null, photoBy = '';
   let tab = 'look', busy = false, EL = null, rendering = 0;
   let bgList = null, pxS = { q: '', page: 1, items: [], busy: false, end: false };
   let hymns = null, bgmBlob = null, bgmName = '', bgmCredit = '', hymnEl = null, hymnPrev = null;
@@ -2806,33 +2827,61 @@ var GXS = (function () {
   const topText = () => sc(String(st().top || '').trim() || DEF_TOP());
   const signText = () => sc(String(st().sign || '').trim() || DEF_SIGN());
   const toText = () => sc(toVal());
-  const isFull = () => !!(photo && st().mode === 'full');
-
+  /* ── 相片狀態（照互動聖經 v2.18：背景與貼紙可並存；photoMode 預設 full）── */
+  let photoImg = null, photoBy = '', stkImg = null, stkBy = '';
+  let photoMode = 'full';
+  let stkSize = 0.30, stkPos = 'br', stkShape = 'p';
+  let origScale = 1, origDX = 0, origDY = 0, origMove = false;
+  let origLay = 'auto', origSplit = false, origTarget = 'v', origNX = 0, origNY = 0;
+  let fullKind = 'verse', fullScale = 1.1, fullBless = '', blessOwn = '';
+  let suppressSticker = false;
+  function setPhoto(im, by) {
+    if (photoMode === 'sticker') { stkImg = im; stkBy = by || ''; }
+    else { photoImg = im; photoBy = by || ''; }
+  }
+  const isFull = () => !!(photoImg && photoMode === 'full');
+  const isFullV = () => isFull() && fullKind === 'verse';
+  const STK_SIZES = [[0.22, ['小張', 'Small']], [0.30, ['中等', 'Medium']], [0.38, ['大張', 'Large']], [0.46, ['滿版', 'Full']], [0.62, ['超大', 'Huge']], [0.84, ['整排', 'Full width']]];
+  const STK_POS = [['bl', ['左下', 'Bottom left']], ['bc', ['正下', 'Bottom centre']], ['br', ['右下', 'Bottom right']], ['tl', ['左上', 'Top left']], ['tr', ['右上', 'Top right']]];
+  const STK_SHAPES = [['p', ['直式', 'Portrait']], ['w', ['橫式 16:9', 'Landscape 16:9']], ['s', ['方形', 'Square']]];
+  const stkRatio = () => stkShape === 'w' ? 0.72 : (stkShape === 's' ? 1.06 : 1.12);
+  function coverDraw2(c, img, x, y, w, h) {
+    const ir = img.width / img.height, r = w / h;
+    let sw, sh, sx, sy;
+    if (ir > r) { sh = img.height; sw = sh * r; sx = (img.width - sw) / 2; sy = 0; }
+    else { sw = img.width; sh = sw / r; sx = 0; sy = (img.height - sh) / 2; }
+    c.drawImage(img, sx, sy, sw, sh, x, y, w, h);
+  }
   function dims() {
     if (isFull()) {
-      const pw = photo.width, ph = photo.height;
+      const pw = photoImg.width, ph = photoImg.height;
       const long = Math.max(1080, Math.min(1920, Math.max(pw, ph))), k = long / Math.max(pw, ph);
       return [Math.round(pw * k / 2) * 2, Math.round(ph * k / 2) * 2];
     }
     return SIZES[st().size];
   }
 
-  /* 整張原圖：相片就是卡片，只疊稱呼、經文（＋祝福）、出處、署名，排在最空的橫帶 */
+  /* 整張原圖：只有 稱呼／經文或問候語（＋祝福）／署名，排在相片上方最空的地方（照互動聖經 drawFullCard） */
   function drawFull(cv, W, H) {
-    const c = cv.getContext('2d'); cv.width = W; cv.height = H;
-    c.drawImage(photo, 0, 0, W, H);
-    const Sx = Math.min(W, H) / 1080, sans = SANS(), serif = SERIF();
-    const toName = toText(), sign = signText(), body = verseText(), ref = refText();
-    const bless = sc(String(note || '').trim()).replace(/\s*\n+\s*/g, EN ? ' ' : '');
-    const FSc = st().fs / 1.45 * 1.1;
+    const ctx = cv.getContext('2d'); cv.width = W; cv.height = H;
+    ctx.drawImage(photoImg, 0, 0, W, H);
+    const S2 = Math.min(W, H) / 1080, sans = SANS(), serif = SERIF();
+    const toName = toText();
+    const sign = signText();
+    let body, ref = '';
+    if (fullKind === 'greet') {
+      body = sc(String(st().greet || '').trim() || T('平安喜樂，主愛你！', 'Peace and joy to you, the Lord loves you!'));
+    } else { body = verseText(); ref = refText(); }
+    const bless = (fullKind === 'verse' ? sc(fullBless || '') : '').trim();
     const mg = Math.round(W * .07);
     const tw = Math.min(W - mg * 2, Math.max(H * 1.05, W * .6));
-    const roomMax = Math.min(H * .85, H * .46 * Math.max(1, FSc));
-    const ts = Math.round(44 * Sx * FSc), ss = Math.round(26 * Sx * FSc);
+    const roomMax = Math.min(H * .85, H * .46 * Math.max(1, fullScale || 1));
+    const FSc = fullScale || 1;
+    const ts = Math.round(44 * S2 * FSc), ss = Math.round(26 * S2 * FSc);
     let row = null, rl = null; const sh = Math.max(24, Math.round(96 * H / W));
     try {
       const sw = 96, sc2 = document.createElement('canvas'); sc2.width = sw; sc2.height = sh;
-      const sx = sc2.getContext('2d'); sx.drawImage(photo, 0, 0, sw, sh);
+      const sx = sc2.getContext('2d'); sx.drawImage(photoImg, 0, 0, sw, sh);
       const d = sx.getImageData(0, 0, sw, sh).data, g = new Float32Array(sw * sh);
       for (let i = 0; i < sw * sh; i++) g[i] = (d[i * 4] * .299 + d[i * 4 + 1] * .587 + d[i * 4 + 2] * .114);
       const x0 = Math.floor((W - tw) / 2 / W * sw), x1 = Math.ceil((W + tw) / 2 / W * sw);
@@ -2846,13 +2895,13 @@ var GXS = (function () {
         row[y] = e / Math.max(1, n); rl[y] = l / Math.max(1, n) / 255;
       }
     } catch (e) { row = null; }
-    let vs = Math.round(58 * Sx * FSc), vl, rs, bs = 0, bl = [], total, pick = null;
-    const vsMin = Math.round(22 * Sx);
+    let vs = Math.round(58 * S2 * FSc), vl, rs, bs = 0, bl = [], total, ty = mg, lum = .3, pick = null;
+    const vsMin = FSc !== 1 ? vs : Math.round(22 * S2);   /* 使用者指定大小就不再自動縮小 */
     for (;;) {
-      c.font = `600 ${vs}px ${serif}`; vl = wrapText(c, body, tw);
-      rs = Math.min(Math.round(30 * Sx * FSc), Math.round(vs * .8));
+      ctx.font = `600 ${vs}px ${serif}`; vl = wrapText(ctx, body, tw);
+      rs = Math.min(Math.round(30 * S2 * FSc), Math.round(vs * .8));
       bs = Math.round(vs * .66); bl = [];
-      if (bless) { c.font = `500 ${bs}px ${sans}`; bl = wrapText(c, bless, tw); }
+      if (bless) { ctx.font = `500 ${bs}px ${sans}`; bl = wrapText(ctx, bless, tw); }
       total = (toName ? ts * 1.9 : 0) + vl.length * vs * 1.5 + (ref ? rs * 2 : 0) + (bl.length ? bs * .9 + bl.length * bs * 1.55 : 0) + ss * 2.2;
       let bestE = 0, bty = mg, blum = .3;
       if (row) {
@@ -2862,151 +2911,238 @@ var GXS = (function () {
         for (let y = y0; y <= maxY; y++) {
           let e = 0, l = 0;
           for (let k = y; k < y + hh && k < sh; k++) { e += row[k]; l += rl[k]; }
-          const s2 = e / hh + (y / sh) * 8;
-          if (s2 < bestE) { bestE = s2; bty = y / sh * H; blum = l / hh; }
+          const s3 = e / hh + (y / sh) * 8;
+          if (s3 < bestE) { bestE = s3; bty = y / sh * H; blum = l / hh; }
         }
       }
       const fits = total <= roomMax;
       if (fits && (!pick || bestE < pick.e)) pick = { e: bestE, vs, vl, rs, bs, bl, total, ty: bty, lum: blum };
       if ((fits && bestE <= 2.2) || vs <= vsMin) break;
-      vs -= Math.max(1, Math.round(2 * Sx));
+      vs -= Math.max(1, Math.round(2 * S2));
     }
     if (!pick) pick = { e: 0, vs, vl, rs, bs, bl, total, ty: mg, lum: .3 };
-    vs = pick.vs; vl = pick.vl; rs = pick.rs; bs = pick.bs; bl = pick.bl; total = pick.total;
-    let ty = Math.max(mg, Math.min(pick.ty, H - mg - total));
-    const dark = pick.lum > .55;
+    vs = pick.vs; vl = pick.vl; rs = pick.rs; bs = pick.bs; bl = pick.bl; total = pick.total; ty = pick.ty; lum = pick.lum;
+    ty = Math.max(mg, Math.min(ty, H - mg - total));
+    const x1c = -(W - tw) / 2 + mg * .5, x2c = (W - tw) / 2 - mg * .5;
+    origDX = Math.max(x1c / W, Math.min(x2c / W, origDX));
+    origDY = Math.max(-(ty - mg) / H, Math.min((H - mg - (ty + total)) / H, origDY));
+    const dark = lum > .55;
     const ink = dark ? '#2a2118' : '#ffffff', sub = dark ? 'rgba(42,33,24,.92)' : 'rgba(255,255,255,.95)';
-    c.save();
-    c.textAlign = 'center'; c.textBaseline = 'alphabetic';
-    c.shadowColor = dark ? 'rgba(255,255,255,.65)' : 'rgba(0,0,0,.55)'; c.shadowBlur = Math.round(10 * Sx);
+    ctx.save(); ctx.translate(origDX * W, origDY * H);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    ctx.shadowColor = dark ? 'rgba(255,255,255,.65)' : 'rgba(0,0,0,.55)'; ctx.shadowBlur = Math.round(10 * S2);
     const cx = W / 2; let y = ty;
     if (toName) {
-      let t2 = ts; c.font = `600 ${t2}px ${serif}`;
-      while (t2 > Math.round(22 * Sx) && c.measureText(toName).width > tw) { t2 -= 2; c.font = `600 ${t2}px ${serif}`; }
-      c.fillStyle = ink; y += ts * 1.05; c.fillText(toName, cx, y); y += ts * .85;
+      let t2 = ts; ctx.font = `600 ${t2}px ${serif}`;
+      while (t2 > Math.round(22 * S2) && ctx.measureText(toName).width > tw) { t2 -= 2; ctx.font = `600 ${t2}px ${serif}`; }
+      ctx.fillStyle = ink; y += ts * 1.05; ctx.fillText(toName, cx, y); y += ts * .85;
     }
-    c.fillStyle = ink; c.font = `600 ${vs}px ${serif}`;
+    ctx.fillStyle = ink; ctx.font = `600 ${vs}px ${serif}`;
     y += vs * .1;
-    vl.forEach(l => { y += vs * 1.0; c.fillText(l, cx, y); y += vs * .5; });
-    if (ref) { c.font = `${rs}px ${sans}`; c.fillStyle = sub; y += rs * .6; c.fillText(ref, cx, y); y += rs * 1.4; }
-    if (bl.length) { c.font = `500 ${bs}px ${sans}`; c.fillStyle = sub; y += bs * .3; bl.forEach(l => { y += bs * 1.1; c.fillText(l, cx, y); y += bs * .45; }); y += bs * .2; }
-    let s2 = ss; c.font = `600 ${s2}px ${sans}`;
-    while (s2 > Math.round(14 * Sx) && c.measureText(sign).width > tw) { s2 -= 2; c.font = `600 ${s2}px ${sans}`; }
-    c.fillStyle = sub; y += ss * 1.1; c.fillText(sign, cx, y);
-    c.restore();
-    if (photoBy) {
-      c.textAlign = 'right'; c.font = `${Math.round(16 * Sx)}px ${sans}`; c.fillStyle = 'rgba(255,255,255,.55)';
-      c.fillText('Photo: ' + photoBy + ' / Pexels', W - Math.round(18 * Sx), H - Math.round(14 * Sx));
-    }
+    vl.forEach(l => { y += vs * 1.0; ctx.fillText(l, cx, y); y += vs * .5; });
+    if (ref) { ctx.font = `${rs}px ${sans}`; ctx.fillStyle = sub; y += rs * .6; ctx.fillText(ref, cx, y); y += rs * 1.4; }
+    if (bl.length) { ctx.font = `500 ${bs}px ${sans}`; ctx.fillStyle = sub; y += bs * .3; bl.forEach(l => { y += bs * 1.1; ctx.fillText(l, cx, y); y += bs * .45; }); y += bs * .2; }
+    let s2 = ss; ctx.font = `600 ${s2}px ${sans}`;
+    while (s2 > Math.round(14 * S2) && ctx.measureText(sign).width > tw) { s2 -= 2; ctx.font = `600 ${s2}px ${sans}`; }
+    ctx.fillStyle = sub; y += ss * 1.1; ctx.fillText(sign, cx, y);
+    ctx.restore();
   }
 
+  /* 一般卡片（照互動聖經 drawVerseCard：背景／貼紙／原圖） */
   function drawCard(cv, W, H) {
     if (isFull()) return drawFull(cv, W, H);
-    const c = cv.getContext('2d'); cv.width = W; cv.height = H;
+    const ctx = cv.getContext('2d'); cv.width = W; cv.height = H;
     const Tp = TPL[st().tpl];
     const Sm = Math.min(W, H), F = Sm / 1080, pad = Math.round(Sm * .085), iw = W - pad * 2;
     const wide = W > H * 1.2;
-    const colW = wide ? Math.min(iw, Math.round(H * 1.5)) : iw;
-    const sans = SANS(), serif = SERIF(), FB = st().fs;
-    const TW = colW + 2 * pad, TX = Math.round((W - TW) / 2), TP = pad, TH = H;
+    let colW = wide ? Math.min(iw, Math.round(H * 1.5)) : iw;
+    const sans = SANS(), serif = SERIF();
+    const FB = st().fs;
+    const orig = !!(photoImg && photoMode === 'orig');
+    let TX = 0, TY = 0, TW = W, TH = H, TP = pad, pz = null;
+    if (orig) {
+      const gp = Math.round(24 * F), fr = Math.round(9 * F), pa = photoImg.width / photoImg.height;
+      const AW = iw, AH = H - pad * 2;
+      const shapeCap = W / H > 1.2 ? .55 : (W / H > .9 ? .40 : .46);
+      const zhS = Math.min(AH * Math.min(.66, shapeCap * origScale), (AW - fr * 2) / pa + fr * 2);
+      const stack = { pz: { x: pad, y: pad, w: AW, h: Math.round(zhS) } };
+      stack.TX = pad; stack.TY = pad + Math.round(zhS) + gp; stack.TW = AW; stack.TH = H - pad - stack.TY;
+      stack.area = Math.min(AW - fr * 2, (zhS - fr * 2) * pa) * Math.min((AW - fr * 2) / pa, zhS - fr * 2);
+      stack.ok = stack.TH >= AH * .52;
+      const zwS = Math.min(AW * Math.min(.62, .5 * origScale), (AH - fr * 2) * pa + fr * 2);
+      const side = { pz: { x: pad, y: pad, w: Math.round(zwS), h: AH } };
+      const gs = Math.round(44 * F);
+      side.TX = pad + Math.round(zwS) + gs; side.TY = pad; side.TW = AW - Math.round(zwS) - gs; side.TH = AH;
+      side.area = Math.min(zwS - fr * 2, (AH - fr * 2) * pa) * Math.min((zwS - fr * 2) / pa, AH - fr * 2);
+      side.ok = side.TW >= AW * .38;
+      let pk;
+      if (origLay === 'stack') pk = stack; else if (origLay === 'side') pk = side;
+      else if (stack.ok && side.ok) pk = stack.area >= side.area ? stack : side;
+      else pk = stack.ok ? stack : (side.ok ? side : (W >= H * 1.2 ? side : stack));
+      pz = pk.pz; TX = pk.TX; TY = pk.TY; TW = pk.TW; TH = pk.TH;
+      TP = Math.round(W * .02);
+    }
+    const stkW = Math.round(Sm * stkSize);
+    const stkHas = !!(stkImg && !suppressSticker && !orig);
+    let stkSide = false;
+    if (!orig) {
+      const sideIw = W - 2 * (pad + stkW + Math.round(28 * F));
+      if (wide && stkHas && stkPos !== 'bc' && sideIw >= W * .45) { stkSide = true; colW = Math.min(colW, sideIw); }
+      TW = colW + 2 * pad; TX = Math.round((W - TW) / 2);
+    }
     const tiw = TW - TP * 2;
-    const g = c.createLinearGradient(0, 0, W * .3, H);
+    const g = ctx.createLinearGradient(0, 0, W * .3, H);
     g.addColorStop(0, Tp.bg[0]); g.addColorStop(.55, Tp.bg[1]); g.addColorStop(1, Tp.bg[2]);
-    c.fillStyle = g; c.fillRect(0, 0, W, H);
-    if (photo) {
-      coverDraw(c, photo, 0, 0, W, H);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    if (photoImg && !orig) {
+      coverDraw2(ctx, photoImg, 0, 0, W, H);
       const hx = Tp.bg[1].replace('#', '');
       const R0 = parseInt(hx.slice(0, 2), 16), G0 = parseInt(hx.slice(2, 4), 16), B0 = parseInt(hx.slice(4, 6), 16);
-      const scg = c.createLinearGradient(0, 0, 0, H);
+      const scg = ctx.createLinearGradient(0, 0, 0, H);
       scg.addColorStop(0, `rgba(${R0},${G0},${B0},0.46)`);
       scg.addColorStop(.5, `rgba(${R0},${G0},${B0},0.66)`);
       scg.addColorStop(1, `rgba(${R0},${G0},${B0},0.56)`);
-      c.fillStyle = scg; c.fillRect(0, 0, W, H);
+      ctx.fillStyle = scg; ctx.fillRect(0, 0, W, H);
     }
-    const rg = c.createRadialGradient(W * .84, H * .10, 10, W * .84, H * .10, W * .75);
+    const rg = ctx.createRadialGradient(W * .84, H * .10, 10, W * .84, H * .10, W * .75);
     rg.addColorStop(0, Tp.glow); rg.addColorStop(1, 'rgba(0,0,0,0)');
-    c.fillStyle = rg; c.fillRect(0, 0, W, H);
-    drawBorder(c, W, H, pad, F, Tp);
-    c.save(); c.translate(TX, 0);
+    ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
+    drawBorder(ctx, W, H, pad, F, Tp);
+    if (orig) {
+      const fr = Math.round(9 * F);
+      const k = Math.min((pz.w - fr * 2) / photoImg.width, (pz.h - fr * 2) / photoImg.height);
+      const dw = Math.round(photoImg.width * k), dh = Math.round(photoImg.height * k);
+      const bx = Math.round(pz.x + (pz.w - dw - fr * 2) / 2), by = Math.round(pz.y + (pz.h - dh - fr * 2) / 2);
+      ctx.save();
+      ctx.shadowColor = 'rgba(0,0,0,.26)'; ctx.shadowBlur = Math.round(22 * F); ctx.shadowOffsetY = Math.round(8 * F);
+      rr(ctx, bx, by, dw + fr * 2, dh + fr * 2, Math.round(10 * F)); ctx.fillStyle = '#FDFBF6'; ctx.fill();
+      ctx.restore();
+      ctx.save(); rr(ctx, bx + fr, by + fr, dw, dh, Math.round(4 * F)); ctx.clip();
+      ctx.drawImage(photoImg, bx + fr, by + fr, dw, dh); ctx.restore();
+    }
+    ctx.save(); ctx.translate(TX, TY);
+    const FT = F;
     const grp = topText();
-    let grpSz = Math.round(27 * F * FB); const grpY = TP + Math.round(42 * F);
-    c.textAlign = 'center'; c.fillStyle = Tp.sub; c.font = `600 ${grpSz}px ${sans}`;
-    while (grpSz > 14 && c.measureText(grp).width > tiw - 80 * F) { grpSz -= 2; c.font = `600 ${grpSz}px ${sans}`; }
-    const gw = c.measureText(grp).width;
-    c.fillText(grp, TW / 2, grpY);
-    c.strokeStyle = Tp.frame.replace(/[\d.]+\)$/, '0.6)'); c.lineWidth = Math.max(1, 1.5 * F);
-    [[TW / 2 - gw / 2 - 28 * F, -1], [TW / 2 + gw / 2 + 28 * F, 1]].forEach(p => {
-      c.beginPath(); c.moveTo(p[0], grpY - 9 * F); c.lineTo(p[0] + p[1] * 30 * F, grpY - 9 * F); c.stroke();
+    const grpSz = Math.round(27 * FT * FB), grpY = TP + Math.round(42 * FT);
+    ctx.textAlign = 'center'; ctx.fillStyle = Tp.sub; ctx.font = `600 ${grpSz}px ${sans}`;
+    const gw = ctx.measureText(grp).width;
+    ctx.fillText(grp, TW / 2, grpY);
+    ctx.strokeStyle = Tp.frame.replace(/[\d.]+\)$/, '0.6)'); ctx.lineWidth = Math.max(1, 1.5 * FT);
+    [[TW / 2 - gw / 2 - 28 * FT, -1], [TW / 2 + gw / 2 + 28 * FT, 1]].forEach(p => {
+      ctx.beginPath(); ctx.moveTo(p[0], grpY - 9 * FT); ctx.lineTo(p[0] + p[1] * 30 * FT, grpY - 9 * FT); ctx.stroke();
     });
     const toName = toText();
     if (toName) {
-      let ts2 = Math.round(40 * F * FB);
-      c.textAlign = 'center'; c.fillStyle = Tp.ink;
-      while (ts2 > Math.round(22 * F * FB)) { c.font = `600 ${ts2}px ${serif}`; if (c.measureText(toName).width <= tiw) break; ts2 -= Math.round(2 * F) || 1; }
-      c.font = `600 ${ts2}px ${serif}`;
-      c.fillText(toName, TW / 2, TP + Math.round(132 * F));
+      let ts2 = Math.round(40 * FT * FB);
+      ctx.textAlign = 'center'; ctx.fillStyle = Tp.ink;
+      while (ts2 > Math.round(22 * FT * FB)) { ctx.font = `600 ${ts2}px ${serif}`; if (ctx.measureText(toName).width <= tiw) break; ts2 -= Math.max(1, Math.round(2 * FT)); }
+      ctx.font = `600 ${ts2}px ${serif}`;
+      ctx.fillText(toName, TW / 2, TP + Math.round(132 * FT));
     }
-    const topRoom = TP + Math.round((toName ? 176 : 100) * F), botRoom = TP + Math.round(70 * F);
+    const stkBottom = stkHas && !stkSide && stkPos !== 'tl' && stkPos !== 'tr';
+    const liftRoom = stkBottom ? Math.round(stkW * stkRatio()) + Math.round(30 * FT) : 0;
+    const topRoom = TP + Math.round((toName ? 176 : 100) * FT), botRoom = TP + Math.round(70 * FT) + liftRoom;
     const room = TH - topRoom - botRoom;
     const verse = verseText();
     const nt = sc(String(note || '').trim());
     const ref = refText();
-    let vs = Math.round(58 * F * FB), vl, fixed, ns, nl, total;
-    const vsMin = Math.round(28 * F);
+    let vs = Math.round(58 * FT * FB), vl, fixed, ns, nl, total;
+    const vsMin = Math.round((orig ? 20 : 28) * FT);
     for (;;) {
-      c.font = `600 ${vs}px ${serif}`;
-      vl = wrapText(c, verse, tiw);
-      if (vl.length <= (EN ? 9 : 7) || vs <= vsMin) break;
-      vs -= Math.round(3 * F) || 1;
-    }
-    fixed = vs * .9 + vl.length * vs * 1.52 + (ref ? Math.round(64 * F) : Math.round(20 * F)) + (nt ? Math.round(86 * F) : 0);
-    ns = Math.min(Math.round(38 * F * FB), Math.round(vs * .82)); nl = [];
-    if (nt) {
       for (;;) {
-        c.font = `${ns}px ${sans}`;
-        nl = wrapText(c, nt, tiw);
-        if (fixed + nl.length * ns * 1.76 <= room || ns <= Math.round(21 * F)) break;
-        ns -= Math.round(2 * F) || 1;
+        ctx.font = `600 ${vs}px ${serif}`;
+        vl = wrapText(ctx, verse, tiw - (orig ? Math.round(vs * .7) : 0));
+        if (vl.length <= (EN ? 9 : 7) || vs <= vsMin) break;
+        vs -= Math.max(1, Math.round(3 * FT));
       }
+      fixed = vs * .9 + vl.length * vs * 1.52 + Math.round(64 * FT) + (nt ? Math.round(86 * FT) : 0);
+      ns = Math.min(Math.round(38 * FT * FB), Math.round(vs * .82)); nl = [];
+      if (nt) {
+        for (;;) {
+          ctx.font = `${ns}px ${sans}`;
+          nl = wrapText(ctx, nt, tiw);
+          if (fixed + nl.length * ns * 1.76 <= room || ns <= Math.round(21 * FT)) break;
+          ns -= Math.max(1, Math.round(2 * FT));
+        }
+      }
+      total = fixed + (nt ? nl.length * ns * 1.76 : 0);
+      if (!orig || total <= room || vs <= vsMin) break;
+      vs -= Math.max(1, Math.round(3 * FT));
     }
-    total = fixed + (nt ? nl.length * ns * 1.76 : 0);
     if (nt && total > room + 1) {
       const fit = Math.max(1, Math.floor((room - fixed) / (ns * 1.76)));
       if (nl.length > fit) {
-        nl = nl.slice(0, fit); let last = nl[fit - 1]; c.font = `${ns}px ${sans}`;
-        while (last.length > 1 && c.measureText(last + '…').width > tiw) last = last.slice(0, -1);
+        nl = nl.slice(0, fit); let last = nl[fit - 1]; ctx.font = `${ns}px ${sans}`;
+        while (last.length > 1 && ctx.measureText(last + '…').width > tiw) last = last.slice(0, -1);
         nl[fit - 1] = last.replace(/[，。、；：,.;:\s]+$/, '') + '…';
         total = fixed + nl.length * ns * 1.76;
       }
     }
     let y = topRoom + Math.max(0, (room - total) / 2);
-    c.fillStyle = Tp.accent; c.font = `600 ${vs}px ${serif}`;
-    y += vs * .9;
-    vl.forEach(l => { c.fillText(l, TW / 2, y); y += vs * 1.52; });
-    if (ref) {
-      c.font = `${Math.min(Math.round(30 * F), Math.round(vs * .85))}px ${sans}`; c.fillStyle = Tp.accent;
-      c.fillText(ref, TW / 2, y); y += Math.round(64 * F);
-    } else y += Math.round(20 * F);
-    if (nt) {
-      c.fillStyle = Tp.gold;
-      c.beginPath(); c.arc(TW / 2, y, Math.round(5 * F), 0, 7); c.fill();
-      c.strokeStyle = Tp.gold; c.lineWidth = 2.5 * F;
-      c.beginPath(); c.moveTo(TW / 2 - 52 * F, y); c.lineTo(TW / 2 - 16 * F, y); c.stroke();
-      c.beginPath(); c.moveTo(TW / 2 + 16 * F, y); c.lineTo(TW / 2 + 52 * F, y); c.stroke();
-      y += Math.round(86 * F);
-      c.textAlign = 'left'; c.fillStyle = Tp.ink; c.font = `${ns}px ${sans}`;
-      nl.forEach(l => { c.fillText(l, TP, y); y += ns * 1.76; });
-      c.textAlign = 'center';
+    const vh = vs * .9 + vl.length * vs * 1.52 + Math.round(64 * FT), nh = total - vh;
+    let vx = 0, vy = 0, nx = 0, ny = 0;
+    if (orig) {
+      const mg = Math.round(12 * F);
+      const clampMv = (dx, dy, top, hh) => {
+        const x1 = -(TX + TP) + mg, x2 = W - (TX + TW - TP) - mg;
+        const y1 = -(TY + top) + mg, y2 = H - (TY + top + hh) - mg;
+        return [Math.max(x1 / W, Math.min(x2 / W, dx)), Math.max(y1 / H, Math.min(y2 / H, dy))];
+      };
+      if (origSplit && nt) {
+        let r1 = clampMv(origDX, origDY, y, vh); origDX = r1[0]; origDY = r1[1];
+        let r2 = clampMv(origNX, origNY, y + vh, nh); origNX = r2[0]; origNY = r2[1];
+        nx = origNX * W; ny = origNY * H;
+      } else {
+        let r1 = clampMv(origDX, origDY, y, total); origDX = r1[0]; origDY = r1[1];
+        origNX = origDX; origNY = origDY; nx = origDX * W; ny = origDY * H;
+      }
+      vx = origDX * W; vy = origDY * H;
     }
+    ctx.save(); ctx.translate(vx, vy);
+    ctx.fillStyle = Tp.accent; ctx.font = `600 ${vs}px ${serif}`;
+    y += vs * .9;
+    vl.forEach(l => { ctx.fillText(l, TW / 2, y); y += vs * 1.52; });
+    ctx.font = `${Math.min(Math.round(30 * FT), Math.round(vs * .85))}px ${sans}`; ctx.fillStyle = Tp.accent;
+    if (ref) ctx.fillText(ref, TW / 2, y);
+    y += Math.round(64 * FT);
+    ctx.restore();
+    if (nt) {
+      ctx.save(); ctx.translate(nx, ny);
+      ctx.fillStyle = Tp.gold;
+      ctx.beginPath(); ctx.arc(TW / 2, y, Math.round(5 * FT), 0, 7); ctx.fill();
+      ctx.strokeStyle = Tp.gold; ctx.lineWidth = 2.5 * FT;
+      ctx.beginPath(); ctx.moveTo(TW / 2 - 52 * FT, y); ctx.lineTo(TW / 2 - 16 * FT, y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(TW / 2 + 16 * FT, y); ctx.lineTo(TW / 2 + 52 * FT, y); ctx.stroke();
+      y += Math.round(86 * FT);
+      ctx.textAlign = 'left'; ctx.fillStyle = Tp.ink; ctx.font = `${ns}px ${sans}`;
+      nl.forEach(l => { ctx.fillText(l, TP, y); y += ns * 1.76; });
+      ctx.textAlign = 'center';
+      ctx.restore();
+    }
+    const lift = stkBottom ? Math.round(stkW * stkRatio()) + Math.round(16 * FT) : 0;
+    ctx.textAlign = 'center'; ctx.fillStyle = Tp.sub;
     const sign = signText();
-    let ss = Math.round(25 * F * FB);
-    while (ss > Math.round(15 * F * FB)) { c.font = `600 ${ss}px ${sans}`; if (c.measureText(sign).width <= tiw) break; ss -= 2; }
-    c.fillStyle = Tp.sub; c.font = `600 ${ss}px ${sans}`;
-    c.fillText(sign, TW / 2, TH - TP * .72 - Math.round(24 * F));
-    c.restore();
-    if (photo && photoBy) {
-      c.textAlign = 'right'; c.font = `${Math.round(16 * F)}px ${sans}`; c.fillStyle = 'rgba(255,255,255,.55)';
-      c.fillText('Photo: ' + photoBy + ' / Pexels', W - Math.round(18 * F), H - Math.round(14 * F));
+    let ss = Math.round(25 * FT * FB);
+    while (ss > Math.round(15 * FT * FB)) { ctx.font = `600 ${ss}px ${sans}`; if (ctx.measureText(sign).width <= tiw) break; ss -= 2; }
+    ctx.font = `600 ${ss}px ${sans}`;
+    ctx.fillText(sign, TW / 2, TH - TP * .72 - Math.round(24 * FT) - lift);
+    ctx.restore();
+    if (stkHas) {
+      const sw = stkW, sh = Math.round(sw * stkRatio());
+      const top = stkPos === 'tl' || stkPos === 'tr';
+      const bx = (stkPos === 'bl' || stkPos === 'tl') ? pad - 4 * F : (stkPos === 'bc') ? Math.round((W - sw) / 2) : W - pad - sw + 4 * F;
+      const by = top ? pad + Math.round(70 * F) : H - pad - sh + 4 * F;
+      ctx.save();
+      ctx.translate(bx + sw / 2, by + sh / 2);
+      ctx.rotate((stkShape === 'w' ? -1.4 : -3) * Math.PI / 180);
+      ctx.shadowColor = 'rgba(0,0,0,.30)'; ctx.shadowBlur = Math.round(24 * F); ctx.shadowOffsetY = Math.round(9 * F);
+      const fr = Math.round(10 * F), pb = (stkShape === 'p') ? Math.round(26 * F) : fr;
+      rr(ctx, -sw / 2, -sh / 2, sw, sh, Math.round(10 * F)); ctx.fillStyle = '#FDFBF6'; ctx.fill();
+      ctx.shadowColor = 'transparent';
+      const iw2 = sw - fr * 2, ih2 = sh - fr - pb;
+      ctx.save(); rr(ctx, -sw / 2 + fr, -sh / 2 + fr, iw2, ih2, Math.round(4 * F)); ctx.clip();
+      coverDraw2(ctx, stkImg, -sw / 2 + fr, -sh / 2 + fr, iw2, ih2); ctx.restore();
+      ctx.restore();
     }
   }
   function drawSelfie(cx, vid, W, H, F) {
@@ -3026,6 +3162,61 @@ var GXS = (function () {
     cx.lineWidth = Math.max(3, W * .006); cx.strokeStyle = '#F4EFE3'; cx.stroke();
     cx.beginPath(); cx.arc(cxx, cyy, R + 4 * F, 0, 7);
     cx.lineWidth = Math.max(2, W * .003); cx.strokeStyle = 'rgba(212,166,91,.85)'; cx.stroke();
+  }
+
+  /* ── 我的相片庫（IndexedDB，最多 40 張；進美圖自動接回上次那張）── */
+  const PLIB_MAX = 40;
+  let pdb = null, plRestored = false;
+  function plOpen() {
+    return new Promise((res, rej) => {
+      if (pdb) return res(pdb);
+      try {
+        const q = indexedDB.open(EN ? 'gn_photos_en' : 'gn_photos', 1);
+        q.onupgradeneeded = e => e.target.result.createObjectStore('p', { keyPath: 'id' });
+        q.onsuccess = e => { pdb = e.target.result; res(pdb); };
+        q.onerror = () => rej(q.error);
+      } catch (e) { rej(e); }
+    });
+  }
+  const plReq = r => new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+  async function plAll() {
+    try { const db = await plOpen(); return (await plReq(db.transaction('p').objectStore('p').getAll())).sort((a, b) => b.ts - a.ts); }
+    catch (e) { return []; }
+  }
+  async function plSave(img, by) {
+    try {
+      const db = await plOpen();
+      const mk = (max, q, url) => new Promise(r => {
+        const k = Math.min(1, max / Math.max(img.width, img.height)), c = document.createElement('canvas');
+        c.width = Math.max(1, Math.round(img.width * k)); c.height = Math.max(1, Math.round(img.height * k));
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        if (url) r(c.toDataURL('image/jpeg', q)); else c.toBlob(b => r(b), 'image/jpeg', q);
+      });
+      const pair = await Promise.all([mk(1600, .88, false), mk(260, .72, true)]);
+      const id = 'p' + Date.now();
+      await plReq(db.transaction('p', 'readwrite').objectStore('p').put({ id, ts: Date.now(), blob: pair[0], thumb: pair[1], by: by || '', w: img.width, h: img.height }));
+      const all = await plAll();
+      for (const o of all.slice(PLIB_MAX)) await plReq(db.transaction('p', 'readwrite').objectStore('p').delete(o.id));
+      if (photoMode !== 'sticker') { st().photoLast = id; st().photoMode = photoMode; keep(); }
+    } catch (e) {}
+  }
+  async function plLoad(rec) {
+    const url = URL.createObjectURL(rec.blob);
+    try {
+      const im = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error('decode')); i.src = url; });
+      setPhoto(im, rec.by || '');
+      if (photoMode !== 'sticker') { st().photoLast = rec.id; keep(); }
+      return true;
+    } finally { setTimeout(() => { try { URL.revokeObjectURL(url); } catch (_) {} }, 30000); }
+  }
+  async function plRestore() {
+    if (plRestored || photoImg || !st().photoLast) return;
+    plRestored = true;
+    try {
+      const db = await plOpen();
+      const rec = await plReq(db.transaction('p').objectStore('p').get(st().photoLast));
+      if (rec) { photoMode = st().photoMode || 'full'; await plLoad(rec); }
+    } catch (e) {}
   }
 
   /* ── 預覽 ───────────────────────────────────────────────────── */
@@ -3067,13 +3258,13 @@ var GXS = (function () {
       if (!r.ok) throw new Error('http ' + r.status);
       const b = await r.blob();
       const o = URL.createObjectURL(b);
-      photo = await loadImg(o, false);
-      photoBy = by || '';
+      const im = await loadImg(o, false);
+      setPhoto(im, by || ''); plSave(im, by || '');
       setTimeout(() => { try { URL.revokeObjectURL(o); } catch (e) {} }, 30000);
       paint();
       say(T('已選好這張相片', 'Photo selected'));
     } catch (e) {
-      try { photo = await loadImg(url, true); photoBy = by || ''; paint(); }
+      try { const im = await loadImg(url, true); setPhoto(im, by || ''); paint(); }
       catch (e2) { say(T('這張相片載入失敗，請換一張', 'Could not load this photo — try another')); }
     }
   }
@@ -3085,7 +3276,7 @@ var GXS = (function () {
       if (!f) return;
       const r = new FileReader();
       r.onload = async () => {
-        try { photo = await loadImg(String(r.result), false); photoBy = ''; paint(); }
+        try { const im = await loadImg(String(r.result), false); setPhoto(im, ''); plSave(im, ''); paint(); }
         catch (e) { say(T('這張相片讀不出來', 'Could not read this photo')); }
       };
       r.readAsDataURL(f);
@@ -3151,20 +3342,20 @@ var GXS = (function () {
           'You are Xiaozhi, a spiritual companion from Kingdom 321 Online Fellowship. From the passage the user gives you, write a very short blessing for a brother or sister: one or two sentences, under 35 words, warm and spoken, drawn from what this passage shows of God. No headings, no quotation marks, do not quote the passage again, no emoji. End with just "Amen" — do not write "in the name of Jesus we pray".')
       : T('你是「小智」，國度321空中團契的屬靈同伴。請照使用者給的這段經文，寫一段溫暖的關懷祝福，送給弟兄姊妹。要求：先用一兩句點出這段經文裡神的心意，再寫一句貼近生活的祝福，最後用一句祝福收尾。總共三到四句、120 字以內，口語、溫暖、不說教，不要標題、不要條列、不要引號、不要再抄一次經文。祝福結尾只用「阿們」，不要寫「奉主耶穌的名禱告」。',
           'You are Xiaozhi, a spiritual companion from Kingdom 321 Online Fellowship. From the passage the user gives you, write a short, warm word of encouragement for a brother or sister. First name in one or two sentences what this passage shows of God’s heart, then one sentence that touches ordinary daily life, then close with a blessing. Three to four sentences, under 60 words. Warm and spoken, never preachy. No headings, no bullet points, no quotation marks, and do not quote the passage again. End with just "Amen" — do not write "in the name of Jesus we pray".');
-    const own = (q1('#gxsOwn') && q1('#gxsOwn').value.trim()) || '';
+    const own = String(blessOwn || '').trim();
     const ask = T('經文：', 'Passage: ') + item.t + (item.ref ? '（' + item.ref + '）' : '') + whoLine() + GX.A().write + T('\n不要用表情符號。', '\nNo emoji.')
       + (own ? T('\n\n使用者自己想說的話（請把這個意思自然融入祝福，仍要依經文來寫）：', '\n\nThe user’s own words (weave this in naturally, still grounded in the passage): ') + own : '');
     const r = await GX.aiRaw(sys, ask, 60000, 600);
     busy = false;
     const out = amenBang(amenOnly(String(r.out || '').replace(/[*#>`]/g, '').replace(/^「|」$/g, '').trim()));
-    if (out) { note = out; say(T('小智寫好了，可以再改', 'Done — you can still edit it')); }
+    if (out) { if (full) fullBless = out.replace(/\s*\n+\s*/g, EN ? ' ' : ''); else note = out; say(T('小智寫好了，可以再改', 'Done — you can still edit it')); }
     else say(T('小智連不上', 'Xiaozhi could not connect') + (r.why ? '（' + r.why + '）' : ''));
     paint();
   }
   const TW_PICKS = EN ? ['Shorter', 'Longer', 'Warmer', 'More everyday', 'Stronger', 'Say it another way'] : ['短一點', '長一點', '更溫暖', '口語一點', '更有力', '換個說法'];
   async function tweak(instr) {
     if (busy || !item) return;
-    const cur = String(note || '').trim();
+    const cur = String(isFullV() ? fullBless : note || '').trim();
     if (!cur) { say(T('內文還是空的——先自己寫一段，或請小智寫一段再來改。', 'The text is empty — write something first, or ask Xiaozhi to write it.')); return; }
     busy = true; paint();
     const sys = T('你是「小智」，國度321空中團契的屬靈同伴。請照使用者的要求，修改他給你的這段祝福。只回傳改好的內文本身——不要解釋、不要標題、不要條列、不要引號、不要再抄一次經文。保持溫暖、口語、不說教。祝福結尾只用「阿們」，不要寫「奉主耶穌的名禱告」。',
@@ -3174,7 +3365,7 @@ var GXS = (function () {
     const r = await GX.aiRaw(sys, ask, 60000, 600);
     busy = false;
     const out = amenBang(amenOnly(String(r.out || '').replace(/[*#>`]/g, '').replace(/^「|」$/g, '').trim()));
-    if (out) { note = out; say(T('改好了', 'Rewritten')); }
+    if (out) { if (isFullV()) fullBless = out.replace(/\s*\n+\s*/g, EN ? ' ' : ''); else note = out; say(T('改好了', 'Rewritten')); }
     else say(T('小智連不上', 'Xiaozhi could not connect') + (r.why ? '（' + r.why + '）' : ''));
     paint();
   }
@@ -3669,7 +3860,7 @@ function mx_strBytes(s){const a=new Uint8Array(s.length);for(let i=0;i<s.length;
   }
   function liveCanvas(W, H, withSelfie) {
     const base = document.createElement('canvas');
-    drawCard(base, W, H);
+    suppressSticker = !!withSelfie; drawCard(base, W, H); suppressSticker = false;
     const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
     const cx = cv.getContext('2d'), t0 = performance.now(), F = Math.min(W, H) / 1080;
     const svid = q1('#gxsSelf');
@@ -3955,73 +4146,145 @@ function mx_strBytes(s){const a=new Uint8Array(s.length);for(let i=0;i<s.length;
   }
 
   /* ── 面板 ───────────────────────────────────────────────────── */
-  const TABS = [['look', ['版面', 'Layout']], ['photo', ['相片', 'Photo']], ['text', ['文字', 'Text']], ['rec', ['配樂與錄製', 'Music & record']]];
+  const TABS = [['text', ['文字', 'Text']], ['photo', ['相片', 'Photo']], ['look', ['版面', 'Layout']], ['rec', ['配樂與錄製', 'Music & record']]];
+  const L2 = a => T(a[0], a[1]);
   function chips(list, cur, key) {
     return `<div class="gxchips">${list.map(x => `<button class="${String(cur) === String(x[0]) ? 'on' : ''}" data-k="${key}" data-v="${esc(x[0])}">${esc(x[1])}</button>`).join('')}</div>`;
   }
-  function tabLook() {
-    const g = st();
-    if (isFull()) return `<p class="sm muted">${esc(T('現在是「整張原圖」：卡片就是相片本身的比例，字會排在相片最空的地方，字色自動配合。想用版型與尺寸，到「相片」改成「當背景」或「不用相片」。', 'Whole-photo mode: the card is the photo itself; text goes where the photo is emptiest. To use layouts and sizes, switch the photo to “background” or “no photo”.'))}</p>
-      <p class="gxlab">${esc(T('文字大小', 'Text size'))}</p>${chips(FS.map(f => [f[0], T(f[1][0], f[1][1])]), g.fs, 'fs')}`;
-    return `<p class="gxlab">${esc(T('版型', 'Style'))}</p>
-      <div class="gxchips">${TPL_ORDER.map(k => `<button class="gxtpl${g.tpl === k ? ' on' : ''}" data-k="tpl" data-v="${k}"><i style="background:linear-gradient(135deg,${TPL[k].bg[0]},${TPL[k].bg[2]});border-color:${TPL[k].gold}"></i>${esc(T(TPL[k].n[0], TPL[k].n[1]))}</button>`).join('')}</div>
-      <p class="gxlab">${esc(T('尺寸', 'Size'))}</p>${chips(Object.keys(SIZES).map(k => [k, T(SIZES[k][2][0], SIZES[k][2][1])]), g.size, 'size')}
-      <p class="gxlab">${esc(T('外框', 'Border'))}</p>${chips(BORDERS.map(b => [b[0], T(b[1][0], b[1][1])]), g.border, 'border')}
-      <p class="gxlab">${esc(T('字級', 'Text size'))}</p>${chips(FS.map(f => [f[0], T(f[1][0], f[1][1])]), g.fs, 'fs')}`;
-  }
-  function tabPhoto() {
-    const g = st();
-    return `<div class="row">
-        <button class="btn" data-k="gal">🖼 ${esc(T('內建圖庫', 'Gallery'))}</button>
-        <button class="btn" data-k="px">🌄 ${esc(T('免費圖庫', 'Free photos'))}</button>
-        <button class="btn" data-k="own">📷 ${esc(T('我的相片', 'My photo'))}</button>
-      </div>
-      ${photo ? `<p class="gxlab">${esc(T('相片怎麼用', 'How to use the photo'))}</p>
-        ${chips([['full', T('整張原圖', 'Whole photo')], ['bg', T('當背景', 'Background')]], g.mode, 'mode')}
-        <button class="btn danger xs2" data-k="nophoto" style="margin-top:8px">${esc(T('不用相片', 'No photo'))}</button>
-        ${photoBy ? `<p class="xs muted">${esc(T('攝影：', 'Photo: ') + photoBy)}（Pexels）</p>` : ''}`
-        : `<p class="xs muted">${esc(T('選一張相片：內建圖庫有聖經故事、風景、十字架等分類；也可以從 Pexels 搜尋，或用自己的相片。', 'Pick a photo from the gallery (Bible stories, scenery, crosses…), search Pexels, or use your own.'))}</p>`}`;
+  const hint = t => `<p class="xs muted" style="margin:6px 0 0">${esc(t)}</p>`;
+  function moveCtl(resetLabel) {
+    return `<div class="row" style="margin-top:8px">
+        <button class="btn xs2 ${origMove ? 'pri' : ''}" data-k="omTog">${esc(origMove ? T('✋ 拖動中：點此鎖定', '✋ Dragging on — tap to lock') : T('✋ 用手指拖動文字', '✋ Drag the text'))}</button>
+        <button class="btn xs2" data-k="omReset">${esc(resetLabel)}</button></div>
+      <div class="row" style="margin-top:6px"><button class="btn xs2" data-k="nudge" data-v="-1,0">←</button><button class="btn xs2" data-k="nudge" data-v="0,-1">↑</button><button class="btn xs2" data-k="nudge" data-v="0,1">↓</button><button class="btn xs2" data-k="nudge" data-v="1,0">→</button></div>
+      ${hint(origMove ? T('現在手指在上方預覽圖拖一拖，文字就會跟著移動；移好後按「鎖定」才能再捲動頁面。', 'Drag on the preview to move the text. Tap lock when done.') : T('也可以按方向鍵微調位置。', 'The arrows nudge the position.'))}`;
   }
   function tabText() {
-    const g = st();
-    return `<p class="gxlab">${esc(T('經文／金句', 'Verse'))}</p>
+    const g = st(), FULL = isFull();
+    let h = `<p class="gxlab">${esc(T('經文／金句', 'Verse'))}</p>
       <textarea id="gxsT" rows="3">${esc(item.t)}</textarea>
-      <p class="gxlab">${esc(T('出處', 'Reference'))}</p><input id="gxsR" value="${esc(item.ref || '')}">
-      <p class="gxlab">${esc(T('稱呼（寫給誰）', 'Greeting (to whom)'))}</p><input id="gxsTo" value="${esc(toVal())}" placeholder="${esc(T('例如：親愛的小明：平安！（留空就不印）', 'e.g. Dear Sam, peace be with you! (leave blank for none)'))}">
-      <p class="xs muted" style="margin:4px 0 0">${esc(T('寫給：', 'Written for: ') + GX.D.icon[GX.aud()] + ' ' + GX.D.names[GX.aud()] + T('（到小智或「我的」可以更改）', ' (change it in Xiaozhi or Me)'))}</p>
-      <p class="gxlab">${esc(isFull() ? T('經文下面的祝福', 'Blessing under the verse') : T('內文', 'Message'))}</p>
-      <textarea id="gxsN" rows="4" placeholder="${esc(T('可以寫一段祝福，或請小智寫', 'Write a blessing, or ask Xiaozhi'))}">${esc(note)}</textarea>
-      <input id="gxsOwn" placeholder="${esc(T('（選填）我想說的話，小智會融進祝福裡', '(optional) what I want to say — Xiaozhi will weave it in'))}" style="margin-top:6px">
-      <div class="row" style="margin-top:8px">
-        <button class="btn pri" data-k="bless" ${busy ? 'disabled' : ''}>${busy ? esc(T('小智寫作中…', 'Xiaozhi is writing…')) : '✍️ ' + esc(T('請小智寫祝福', 'Xiaozhi writes a blessing'))}</button>
-        <button class="btn" data-k="tw" ${busy ? 'disabled' : ''}>✨ ${esc(T('改一改', 'Revise'))}</button>
-      </div>
-      <div class="gxchips" id="gxsTw" style="display:none">${TW_PICKS.map(p => `<button data-k="twp" data-v="${esc(p)}">${esc(p)}</button>`).join('')}</div>
-      <div class="row" style="margin-top:6px">
-        ${item.n0 ? `<button class="btn xs2" data-k="mine">${esc(T('用我的領受', 'Use my note'))}</button>` : ''}
-        <button class="btn xs2" data-k="nonote">${esc(T('不要內文', 'No message'))}</button>
-      </div>
-      <p class="gxlab">${esc(T('上方團體名', 'Group name (top)'))}</p><input id="gxsTop" value="${esc(g.top)}" placeholder="${esc(DEF_TOP())}">
-      <p class="gxlab">${esc(T('署名', 'Signature'))}</p><input id="gxsSign" value="${esc(g.sign)}" placeholder="${esc(DEF_SIGN())}">`;
+      <p class="gxlab">${esc(T('出處', 'Reference'))}</p><input id="gxsR" value="${esc(item.ref || '')}">`;
+    if (FULL) {
+      h += `<p class="gxlab">${esc(T('文字內容', 'Text'))}</p>${chips([['verse', T('經文', 'Verse')], ['greet', T('問候語', 'Greeting')]], fullKind, 'fk')}`;
+      if (fullKind === 'verse') {
+        h += `<input id="gxsOwn" value="${esc(blessOwn)}" style="margin-top:8px" placeholder="${esc(T('自己說（選填）：想對他說什麼？例如：他最近工作很辛苦', 'Your own words (optional), e.g. he has been working hard'))}">
+          <div class="row" style="margin-top:8px">
+            <button class="btn pri" data-k="bless" ${busy ? 'disabled' : ''}>${busy ? esc(T('小智寫作中…', 'Xiaozhi is writing…')) : esc(T('✍️ 小智寫祝福（附在經文下面）', '✍️ Xiaozhi writes a blessing'))}</button>
+            <button class="btn" data-k="tw" ${busy ? 'disabled' : ''}>${esc(T('✨ 改一改', '✨ Revise'))}</button>
+            <button class="btn xs2" data-k="fbClr">${esc(T('不要祝福', 'No blessing'))}</button></div>
+          <div class="gxchips" id="gxsTw" style="display:none;margin-top:6px">${TW_PICKS.map(p => `<button data-k="twp" data-v="${esc(p)}">${esc(p)}</button>`).join('')}</div>
+          <textarea id="gxsFB" rows="2" style="margin-top:8px" placeholder="${esc(T('按上面的鈕，小智會依這節經文寫一兩句短祝福；也可以自己寫。', 'Tap the button for a one- or two-sentence blessing, or write your own.'))}">${esc(fullBless)}</textarea>`;
+      } else {
+        h += `<textarea id="gxsGreet" rows="2" style="margin-top:8px" placeholder="${esc(T('平安喜樂，主愛你！', 'Peace and joy to you!'))}">${esc(g.greet || '')}</textarea>`;
+      }
+    } else {
+      h += `<p class="gxlab">${esc(T('卡片內文', 'Card text'))}</p>
+        <textarea id="gxsN" rows="4" placeholder="${esc(T('寫下你的領受或祝福', 'Your note or blessing'))}">${esc(note)}</textarea>
+        <input id="gxsOwn" value="${esc(blessOwn)}" style="margin-top:6px" placeholder="${esc(T('自己說（選填）：想對他說什麼？例如：他最近工作很辛苦', 'Your own words (optional), e.g. he has been working hard'))}">
+        <div class="row" style="margin-top:8px">
+          <button class="btn pri" data-k="bless" ${busy ? 'disabled' : ''}>${busy ? esc(T('小智寫作中…', 'Xiaozhi is writing…')) : '✍️ ' + esc(T('請小智寫祝福', 'Xiaozhi writes a blessing'))}</button>
+          <button class="btn" data-k="tw" ${busy ? 'disabled' : ''}>${esc(T('✨ 改一改', '✨ Revise'))}</button>
+          ${item.n0 ? `<button class="btn xs2" data-k="mine">${esc(T('用我的領受', 'Use my note'))}</button>` : ''}
+          <button class="btn xs2" data-k="nonote">${esc(T('不要內文', 'No text'))}</button></div>
+        <div class="gxchips" id="gxsTw" style="display:none;margin-top:6px">${TW_PICKS.map(p => `<button data-k="twp" data-v="${esc(p)}">${esc(p)}</button>`).join('')}</div>
+        ${hint(T('寫給：', 'Written for: ') + GX.D.icon[GX.aud()] + ' ' + GX.D.names[GX.aud()] + T('（到「小智」頁或「我的」設定可以更改）', ' (change it in Xiaozhi or Me)'))}`;
+    }
+    h += `<p class="gxlab">${esc(T('稱呼（寫給誰）', 'Greeting (to whom)'))}</p><input id="gxsTo" value="${esc(toVal())}" placeholder="${esc(T('例如：親愛的小明：平安！（留空就不印）', 'e.g. Dear Sam, peace be with you! (blank for none)'))}">`;
+    if (!FULL) h += `<p class="gxlab">${esc(T('上方團體名', 'Group name (top)'))}</p><input id="gxsTop" value="${esc(g.top)}" placeholder="${esc(DEF_TOP())}">`;
+    h += `<p class="gxlab">${esc(T('署名', 'Signature'))}</p><input id="gxsSign" value="${esc(g.sign)}" placeholder="${esc(DEF_SIGN())}">`;
+    return h;
+  }
+  function tabLook() {
+    const g = st();
+    if (isFull()) return `${hint(T('整張相片就是整張卡片，不加邊框；只留稱呼、經文（或問候語）與署名，自動排在相片上方最空的地方。', 'The whole photo is the card, with no border: just the greeting, the verse (or a greeting line) and the signature, placed where the photo is emptiest.'))}
+      <p class="gxlab">${esc(T('文字大小（也可以在預覽圖上用兩指捏合縮放）', 'Text size (or pinch on the preview)'))}　<b id="fSzV">${Math.round(fullScale * 100)}%</b></p>
+      <input type="range" id="fSz" min="50" max="250" step="5" value="${Math.round(fullScale * 100)}" style="width:100%;padding:0;border:0;background:none">
+      ${moveCtl(T('↺ 回到自動位置', '↺ Auto position'))}`;
+    return `<p class="gxlab">${esc(T('樣式', 'Style'))}</p>
+      <div class="gxchips">${TPL_ORDER.map(k => `<button class="gxtpl${g.tpl === k ? ' on' : ''}" data-k="tpl" data-v="${k}"><i style="background:linear-gradient(135deg,${TPL[k].bg[0]},${TPL[k].bg[2]});border-color:${TPL[k].gold}"></i>${esc(L2(TPL[k].n))}</button>`).join('')}</div>
+      <p class="gxlab">${esc(T('外框', 'Border'))}</p>${chips(BORDERS.map(b => [b[0], L2(b[1])]), g.border, 'border')}
+      <p class="gxlab">${esc(T('尺寸', 'Size'))}</p>${chips(Object.keys(SIZES).map(k => [k, L2(SIZES[k][2])]), g.size, 'size')}
+      <p class="gxlab">${esc(T('字級', 'Text size'))}</p>${chips(FS.map(f => [f[0], L2(f[1])]), g.fs, 'fs')}
+      ${hint(T('字級會一起放大團體名稱、稱呼、經文、內文與署名。', 'Scales the group name, greeting, verse, text and signature together.'))}`;
+  }
+  function tabPhoto() {
+    const isStk = photoMode === 'sticker';
+    const cur = isStk ? stkImg : photoImg, by = isStk ? stkBy : photoBy;
+    const mk = (n, on) => n + (on ? ' ✓' : '');
+    let h = chips([['bg', mk(T('當背景', 'Background'), !!photoImg)], ['sticker', mk(T('貼在卡片上', 'Sticker'), !!stkImg)], ['orig', T('原圖', 'Original')], ['full', T('整張原圖', 'Full photo')]], photoMode, 'pmode');
+    h += `<p class="gxlab">${esc(T('內建圖庫（先選分類，點一下就套用）', 'Built-in gallery (pick a category, tap to use)'))}</p>
+      <div id="gxBgCats" class="gxchips"></div><div id="gxBgStrip" class="gxstrip"><span class="xs muted">${esc(T('載入中…', 'Loading…'))}</span></div>`;
+    if (cur) {
+      if (photoMode === 'full') h += hint(T('整張原圖：文字大小與位置到「版面」調整；稱呼、經文或問候語、祝福到「文字」修改。', 'Full photo: adjust text size and position under Layout; edit the words under Text.'));
+      if (photoMode === 'orig') {
+        h += hint(T('原圖完整呈現、不裁切，文字排在不蓋住相片的空位。', 'The photo is shown whole and uncropped; the text sits in the free space beside it.'))
+          + `<p class="gxlab">${esc(T('相片大小', 'Photo size'))}</p>${chips([[0.85, T('小', 'Small')], [1, T('中', 'Medium')], [1.15, T('大', 'Large')]], origScale, 'oSz')}
+          <p class="gxlab">${esc(T('構圖（自動會依相片與卡片尺寸挑最合適的）', 'Layout (Auto picks the best fit)'))}</p>${chips([['auto', T('自動', 'Auto')], ['stack', T('上圖下字', 'Photo on top')], ['side', T('左圖右字', 'Photo on left')]], origLay, 'oLay')}
+          <p class="gxlab">${esc(T('文字位置（經文、出處與領受是一個區塊，可自己移動）', 'Text position'))}</p>${chips([[0, T('整塊一起移', 'Move together')], [1, T('分開移動', 'Move separately')]], origSplit ? 1 : 0, 'oSp')}
+          ${origSplit ? `<p class="gxlab">${esc(T('現在要移動哪一塊？', 'Which part to move?'))}</p>${chips([['v', T('經文與出處', 'Verse & reference')], ['n', T('領受', 'My note')]], origTarget, 'oTg')}` : ''}
+          ${moveCtl(T('↺ 回到預設', '↺ Reset'))}`;
+      }
+      if (isStk) h += `<p class="gxlab">${esc(T('形狀', 'Shape'))}</p>${chips(STK_SHAPES.map(x => [x[0], L2(x[1])]), stkShape, 'sShape')}
+          <p class="gxlab">${esc(T('大小', 'Size'))}</p>${chips(STK_SIZES.map(x => [x[0], L2(x[1])]), stkSize, 'sSize')}
+          <p class="gxlab">${esc(T('位置', 'Position'))}</p>${chips(STK_POS.map(x => [x[0], L2(x[1])]), stkPos, 'sPos')}`;
+      if (by) h += hint(T('攝影：', 'Photo: ') + by + '（Pexels）');
+      h += `<div class="row" style="margin-top:12px">
+        <button class="btn xs2" data-k="own">${esc(T('換一張（從相簿）', 'Change (from album)'))}</button>
+        <button class="btn xs2" data-k="px">${esc(T('🖼 從免費圖庫選', '🖼 Free photo library'))}</button>
+        <button class="btn xs2" data-k="plib">${esc(T('📚 我的相片庫', '📚 My photos'))}</button>
+        <button class="btn xs2 danger" data-k="nophoto">${esc(T('移除相片', 'Remove photo'))}</button></div>`;
+    } else {
+      h += `<button class="btn" style="width:100%;margin-top:12px" data-k="px">${esc(T('🖼 從免費圖庫選', '🖼 Free photo library'))}</button>
+        <button class="btn" style="width:100%;margin-top:8px" data-k="plib">${esc(T('📚 我的相片庫（用過的相片都在這裡）', '📚 My photos (everything you used before)'))}</button>
+        <button class="btn" style="width:100%;margin-top:8px" data-k="own">${esc(T('📷 從相簿選一張', '📷 Pick from your album'))}</button>
+        ${isStk && photoImg ? `<button class="btn" style="width:100%;margin-top:8px" data-k="useBg">${esc(T('把背景那張改成貼紙', 'Use the background photo as a sticker'))}</button>` : ''}
+        ${hint(isStk ? T('貼紙會以拍立得的樣子貼在卡片上，可選形狀、大小與位置。', 'The sticker sits on the card like a polaroid; choose shape, size and position.') : T('選一張相片：整張原圖會把相片當成整張卡片；當背景會疊一層半透明的版型顏色。', 'Full photo turns the photo into the whole card; background adds a soft tint of the style colour.'))}`;
+    }
+    return h;
+  }
+  async function fillBuiltins() {
+    const cats = q1('#gxBgCats', EL), strip = q1('#gxBgStrip', EL);
+    if (!cats || !strip) return;
+    try { await bgLoad(); } catch (e) { strip.innerHTML = `<span class="xs muted">${esc(T('圖庫連不上，請稍後再試', 'Could not reach the gallery'))}</span>`; return; }
+    const cat = bgList.cats.some(c => c.id === st().bgCat) ? st().bgCat : (bgList.cats[0] || {}).id;
+    cats.innerHTML = bgList.cats.map(c => `<button class="${c.id === cat ? 'on' : ''}" data-k="bgcat" data-v="${esc(c.id)}">${esc(bgName(c))}</button>`).join('');
+    strip.innerHTML = bgList.list.map((x, i) => x.c !== cat ? '' : `<button class="gxcell" data-k="bgpick" data-v="${i}" title="${esc(bgName(x))}"><img src="${SITE + esc(x.t || x.f)}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${SITE + esc(x.f)}'"><span>${esc(bgName(x))}</span></button>`).join('');
+  }
+  async function openPhotoLib() {
+    const b = sub(T('📚 我的相片庫', '📚 My photos'), `<p class="xs muted">${esc(T('從相簿或圖庫選過的相片都會自動留在這裡（存在這支手機上，最多 40 張）。點一張就用；右上 × 是移出相片庫。', 'Photos you used are kept here on this phone (up to 40). Tap to use; × removes it.'))}</p><div class="gxgrid" id="plGrid"></div>`);
+    const grid = q1('#plGrid', b);
+    const draw = async () => {
+      const all = await plAll();
+      if (!all.length) { grid.innerHTML = `<p class="sm muted" style="grid-column:1/-1">${esc(T('還沒有相片。先從相簿或圖庫選一張，就會留在這裡。', 'No photos yet.'))}</p>`; return; }
+      grid.innerHTML = all.map(o => `<div class="gxcell" data-id="${o.id}" style="position:relative;cursor:pointer"><img src="${o.thumb}" alt=""><span class="pxdel" data-d="${o.id}">×</span></div>`).join('');
+      qa('.gxcell', grid).forEach(c => c.onclick = async e => {
+        const d = e.target.closest('[data-d]');
+        const db = await plOpen();
+        if (d) { await plReq(db.transaction('p', 'readwrite').objectStore('p').delete(d.dataset.d)); if (st().photoLast === d.dataset.d) { st().photoLast = ''; keep(); } draw(); return; }
+        const rec = await plReq(db.transaction('p').objectStore('p').get(c.dataset.id)); if (!rec) return;
+        await plLoad(rec); closeSub(); paint();
+      });
+    };
+    draw();
   }
   function tabRec() {
     const g = st(), on = recOn();
-    return `<p class="gxlab">🎵 ${esc(T('配樂', 'Music'))}</p>
-      <p class="sm" style="margin:0 0 6px">${bgmBlob ? '♪ ' + esc(sc(bgmName)) : esc(T('（還沒選配樂）', '(no music yet)'))}</p>
-      <div class="row"><button class="btn" data-k="hymn">${esc(T('從詩歌庫選', 'Hymn library'))}</button>
-        <button class="btn" data-k="bgmfile">${esc(T('從檔案選', 'From a file'))}</button>
+    return `<p class="gxlab">🎵 ${esc(T('背景音樂', 'Background music'))}</p>
+      ${bgmBlob ? `<p class="sm" style="margin:0 0 2px"><b>♪ ${esc(sc(bgmName))}</b></p>${bgmCredit ? hint(sc(bgmCredit)) : ''}` : hint(T('從詩歌庫或手機選一首，錄影時會混進去。', 'Pick a song from the hymn library or your phone; it is mixed into recordings.'))}
+      <div class="row" style="margin-top:8px"><button class="btn" data-k="hymn">${esc(T('🎵 從詩歌庫選', '🎵 Hymn library'))}</button>
+        <button class="btn" data-k="bgmfile">${esc(bgmBlob ? T('換一首（從手機）', 'Change (from phone)') : T('從手機選音樂', 'Pick from phone'))}</button>
         ${bgmBlob ? `<button class="btn xs2 danger" data-k="nobgm">${esc(T('不要配樂', 'No music'))}</button>` : ''}</div>
-      ${bgmBlob ? `<p class="gxlab">${esc(T('配樂音量', 'Music volume'))}</p>${chips([[0.12, T('小聲', 'Soft')], [0.22, T('適中', 'Medium')], [0.38, T('明顯', 'Strong')]], g.vol, 'vol')}` : ''}
-      <p class="gxlab">🎙 ${esc(T('開口錄製', 'Record with your voice'))}</p>
-      ${chips([['a', T('🎙 只有聲音', '🎙 Voice only')], ['c', T('🖼 卡片影片', '🖼 Card video')], ['s', T('📷 自拍影片', '📷 Selfie video')]], recMode, 'rmode')}
-      <div id="gxsSelfWrap" style="${recMode === 's' ? '' : 'display:none'}"><video id="gxsSelf" muted playsinline autoplay style="width:150px;height:150px;border-radius:50%;object-fit:cover;transform:scaleX(-1);display:block;margin:8px auto;background:#000"></video></div>
+      ${bgmBlob ? `<p class="gxlab">${esc(T('音量', 'Volume'))}</p>${chips([[0.12, T('小聲', 'Soft')], [0.22, T('適中', 'Medium')], [0.38, T('明顯', 'Strong')]], g.vol, 'vol')}` : ''}
+      <p class="gxlab">🎙 ${esc(T('錄製', 'Record'))}</p>
+      ${chips([['a', T('🎙 只有聲音', '🎙 Voice only')], ['c', T('🖼 卡片畫面', '🖼 Card video')], ['s', T('📷 自拍畫面', '📷 Selfie video')]], recMode, 'rmode')}
+      <div id="gxsSelfWrap" style="${recMode === 's' ? '' : 'display:none'}"><video id="gxsSelf" muted playsinline autoplay style="width:150px;height:150px;border-radius:50%;object-fit:cover;transform:scaleX(-1);display:block;margin:8px auto;background:#000;border:3px solid var(--brass)"></video></div>
       <div class="gxrec"><span id="gxsRecSt">${on ? '<span class="recdot"></span>' + esc(recLabel) : esc(T('準備好了就按開始', 'Ready when you are'))}</span><b id="gxsRecTm">${mmss(recSec)}</b></div>
       <button class="btn ${on ? 'danger' : 'pri'}" style="width:100%" data-k="rec">${on ? esc(T('■ 停止並完成', '■ Stop and finish')) : esc(T('● 開始錄製', '● Start recording'))}</button>
-      <p class="gxlab">🎬 ${esc(T('不開口，只配音樂（音樂卡片）', 'Music card (no voice)'))}</p>
+      ${bgmBlob ? `<p class="gxlab">${esc(T('不錄音，只配音樂', 'Music only, no voice'))}</p>
       ${chips([[15, T('15 秒', '15 s')], [30, T('30 秒', '30 s')], [60, T('1 分鐘', '1 min')], [0, T('整首', 'Whole song')]], g.mc, 'mc')}
-      <button class="btn" style="width:100%;margin-top:8px" data-k="mcrec">${on ? esc(T('■ 停止', '■ Stop')) : esc(T('🎬 製作音樂卡片', '🎬 Make a music card'))}</button>
-      <p class="xs muted">${esc(T('有配樂時，結尾一律淡出 5 秒；淡出中再按一次「停止」就立即停。製作時請讓 App 留在前景、螢幕亮著。', 'With music, the ending always fades out over 5 seconds; tap stop again to end at once. Keep the app open with the screen on.'))}</p>
-      <button class="btn xs2" style="margin-top:6px" data-k="works">📂 ${esc(T('看我的作品', 'Open My works'))}</button>`;
+      <button class="btn" style="width:100%;margin-top:8px" data-k="mcrec">${on ? esc(T('■ 停止', '■ Stop')) : '🎵 ' + esc(T('製作音樂卡片', 'Make a music card'))}</button>` : ''}
+      ${hint(T('有配樂時，結尾一律淡出 5 秒；淡出中再按一次「停止」就立即停。製作時請讓 App 留在前景、螢幕亮著。', 'With music, the ending always fades out over 5 seconds; tap stop again to end at once. Keep the app open with the screen on.'))}
+      <button class="btn xs2" style="margin-top:8px" data-k="works">📂 ${esc(T('看我的作品', 'Open My works'))}</button>`;
   }
   function paint() {
     if (!EL || !item) return;
@@ -4031,18 +4294,87 @@ function mx_strBytes(s){const a=new Uint8Array(s.length);for(let i=0;i<s.length;
       body.innerHTML = fn();
       qa('.gxtabs button', EL).forEach(b => b.classList.toggle('on', b.getAttribute('data-t') === tab));
       bindText();
+      if (tab === 'photo') fillBuiltins();
       if (tab === 'rec' && recMode === 's' && selfieStream) attachSelfie();
     }
+    attachDrag();
     renderCard();
   }
   function bindText() {
-    const on = (id, fn) => { const el = q1(id, EL); if (el) el.oninput = () => { fn(el.value); renderCard(); }; };
+    const on = (id, fn, slow) => {
+      const el = q1(id, EL); if (!el) return;
+      let tm = null;
+      el.oninput = () => { fn(el.value); clearTimeout(tm); tm = setTimeout(renderCard, slow ? 400 : 120); };
+    };
     on('#gxsT', v => { item.t = v; });
     on('#gxsR', v => { item.ref = v; });
-    on('#gxsTo', v => { st().to = v; keep(); });
-    on('#gxsN', v => { note = v; });
-    on('#gxsTop', v => { st().top = v; keep(); });
-    on('#gxsSign', v => { st().sign = v; keep(); });
+    on('#gxsTo', v => { st().to = v; keep(); }, 1);
+    on('#gxsN', v => { note = v; }, 1);
+    on('#gxsFB', v => { fullBless = v; }, 1);
+    on('#gxsGreet', v => { st().greet = v; keep(); }, 1);
+    on('#gxsTop', v => { st().top = v; keep(); }, 1);
+    on('#gxsSign', v => { st().sign = v; keep(); }, 1);
+    const own = q1('#gxsOwn', EL); if (own) own.oninput = () => { blessOwn = own.value; };
+    const fs = q1('#fSz', EL);
+    if (fs) {
+      fs.oninput = () => { fullScale = fs.value / 100; const lb = q1('#fSzV', EL); if (lb) lb.textContent = fs.value + '%'; renderFast(); };
+      fs.onchange = () => renderCard();
+    }
+  }
+  /* 拖動文字時用半尺寸 JPEG 快速重畫預覽；放開手指再畫完整的 */
+  let dragRaf = 0;
+  function renderFast() {
+    if (dragRaf) return;
+    dragRaf = requestAnimationFrame(() => {
+      dragRaf = 0;
+      const d = dims(), cv = document.createElement('canvas');
+      try { drawCard(cv, Math.round(d[0] / 2), Math.round(d[1] / 2)); } catch (e) { return; }
+      const img = q1('#gxsPv'); if (img) img.src = cv.toDataURL('image/jpeg', .8);
+    });
+  }
+  function origShift(dx, dy) {
+    if (origSplit && origTarget === 'n' && photoMode !== 'full') { origNX += dx; origNY += dy; }
+    else { origDX += dx; origDY += dy; if (!origSplit) { origNX = origDX; origNY = origDY; } }
+  }
+  function attachDrag() {
+    const box = q1('.gxspv', EL); if (!box) return;
+    const on = !!(photoImg && (photoMode === 'orig' || photoMode === 'full') && origMove);
+    box.style.touchAction = on ? 'none' : '';
+    box.style.outline = on ? '2px dashed var(--brass)' : '';
+    if (!on) { box.onpointerdown = box.onpointermove = box.onpointerup = box.onpointercancel = null; return; }
+    let sx = 0, sy = 0, b0 = [0, 0, 0, 0], act = false;
+    const pts = new Map(); let d0 = 0, s0 = 1;
+    const full = photoMode === 'full';
+    const dist = () => { const a = Array.from(pts.values()); return Math.hypot(a[0][0] - a[1][0], a[0][1] - a[1][1]) || 1; };
+    box.onpointerdown = e => {
+      const img = q1('img', box); if (!img) return;
+      pts.set(e.pointerId, [e.clientX, e.clientY]);
+      try { box.setPointerCapture(e.pointerId); } catch (_) {}
+      e.preventDefault();
+      if (full && pts.size === 2) { d0 = dist(); s0 = fullScale; act = false; return; }
+      act = true; sx = e.clientX; sy = e.clientY; b0 = [origDX, origDY, origNX, origNY];
+    };
+    box.onpointermove = e => {
+      if (pts.has(e.pointerId)) pts.set(e.pointerId, [e.clientX, e.clientY]);
+      if (full && pts.size >= 2) {
+        fullScale = Math.max(.5, Math.min(2.5, s0 * dist() / d0));
+        const sl = q1('#fSz', EL); if (sl) sl.value = Math.round(fullScale * 100);
+        const lb = q1('#fSzV', EL); if (lb) lb.textContent = Math.round(fullScale * 100) + '%';
+        renderFast(); return;
+      }
+      if (!act) return;
+      const img = q1('img', box); if (!img) return;
+      const r = img.getBoundingClientRect();
+      origDX = b0[0]; origDY = b0[1]; origNX = b0[2]; origNY = b0[3];
+      origShift((e.clientX - sx) / r.width, (e.clientY - sy) / r.height);
+      renderFast();
+    };
+    const end = e => {
+      const was = pts.size; pts.delete(e.pointerId);
+      if (was >= 2) { act = false; renderCard(); return; }
+      if (!act) return; act = false; renderCard();
+    };
+    box.onpointerup = end; box.onpointercancel = end;
   }
   function onClick(e) {
     let t = e.target;
@@ -4057,14 +4389,34 @@ function mx_strBytes(s){const a=new Uint8Array(s.length);for(let i=0;i<s.length;
     if (k === 'tpl' || k === 'size' || k === 'border') { g[k] = v; keep(); return paint(); }
     if (k === 'fs' || k === 'vol') { g[k] = +v; keep(); return paint(); }
     if (k === 'mc') { if (recOn()) return; g.mc = +v; keep(); return paint(); }
-    if (k === 'mode') { g.mode = v; keep(); return paint(); }
+    if (k === 'pmode') { photoMode = v; if (v !== 'orig' && v !== 'full') origMove = false; origDX = origDY = origNX = origNY = 0; if (v !== 'sticker') { g.photoMode = v; keep(); } return paint(); }
+    if (k === 'fk') { fullKind = v; return paint(); }
+    if (k === 'omTog') { origMove = !origMove; return paint(); }
+    if (k === 'omReset') { origDX = origDY = origNX = origNY = 0; return renderCard(); }
+    if (k === 'nudge') { const p = v.split(',').map(Number); origShift(p[0] * 0.025, p[1] * 0.025); return renderCard(); }
+    if (k === 'oSz') { origScale = +v; origDX = origDY = origNX = origNY = 0; return paint(); }
+    if (k === 'oLay') { origLay = v; origDX = origDY = origNX = origNY = 0; return paint(); }
+    if (k === 'oSp') { origSplit = v === '1'; if (origSplit) { origNX = origDX; origNY = origDY; } return paint(); }
+    if (k === 'oTg') { origTarget = v; return paint(); }
+    if (k === 'sShape') { stkShape = v; if (stkShape === 'w' && stkSize < .38) stkSize = .46; return paint(); }
+    if (k === 'sSize') { stkSize = +v; return paint(); }
+    if (k === 'sPos') { stkPos = v; return paint(); }
+    if (k === 'useBg') { stkImg = photoImg; stkBy = photoBy; photoImg = null; photoBy = ''; return paint(); }
+    if (k === 'bgcat') { g.bgCat = v; keep(); return fillBuiltins(); }
+    if (k === 'bgpick') { const it = bgList && bgList.list[+v]; if (it) setPhotoURL(SITE + it.f, ''); return; }
     if (k === 'gal') return openGallery();
     if (k === 'px') return openPexels();
+    if (k === 'plib') return openPhotoLib();
     if (k === 'own') return pickOwn();
-    if (k === 'nophoto') { photo = null; photoBy = ''; return paint(); }
+    if (k === 'nophoto') {
+      if (photoMode === 'sticker') { stkImg = null; stkBy = ''; }
+      else { photoImg = null; photoBy = ''; origMove = false; g.photoLast = ''; keep(); }
+      return paint();
+    }
     if (k === 'bless') return blessWrite();
     if (k === 'tw') { const c = q1('#gxsTw', EL); if (c) c.style.display = c.style.display === 'none' ? 'flex' : 'none'; return; }
     if (k === 'twp') return tweak(v);
+    if (k === 'fbClr') { fullBless = ''; return paint(); }
     if (k === 'mine') { note = item.n0 || ''; return paint(); }
     if (k === 'nonote') { note = ''; return paint(); }
     if (k === 'hymn') return openHymns();
@@ -4109,6 +4461,8 @@ function mx_strBytes(s){const a=new Uint8Array(s.length);for(let i=0;i<s.length;
     stopTTS();
     item = { t: text, ref: o.ref || '', n0: String(o.note || o.n || '').trim(), plain: !!o.plain };
     note = item.n0;
+    fullBless = ''; blessOwn = '';
+    photoMode = st().photoMode || 'full';
     if (!EL) {
       EL = document.createElement('div'); EL.id = 'gxs'; EL.className = 'gxsmask gxsmain';
       EL.addEventListener('click', onClick);
@@ -4124,6 +4478,7 @@ function mx_strBytes(s){const a=new Uint8Array(s.length);for(let i=0;i<s.length;
     EL.classList.add('on');
     document.documentElement.setAttribute('data-gxs', '1');
     paint();
+    plRestore().then(() => { if (photoImg) paint(); });
     return true;
   }
   function close() {
@@ -4146,11 +4501,19 @@ function mx_strBytes(s){const a=new Uint8Array(s.length);for(let i=0;i<s.length;
     while ((m = re.exec(s)) !== null) { if ((out + m[0]).length > max) break; out += m[0]; if (!m[0]) break; }
     return (out || s.slice(0, max)).trim() + (out ? '' : '…');
   }
+  function quoteOf(text) {
+    const m = String(text || '').match(/^\s*>\s?(.+)$/m);
+    if (!m) return '';
+    const x = m[1].replace(/\*\*/g, '').trim();
+    const max = EN ? 320 : 150;
+    return (x.length >= (EN ? 30 : 12) && x.length <= max + 60) ? x : '';
+  }
   function fromAnswer(text, q) {
     const m = String(q || '').match(EN ? /[“"]([^”"]{4,300})[”"]/ : /「([^」]{4,300})」/);
     const n = (R && R.ch) || S.last || 1;
-    if (m) return open({ text: m[1], ref: GX.chLabel(n), note: excerpt(text, EN ? 320 : 140) });
-    return open({ text: excerpt(text, EN ? 300 : 120), ref: T('小智 · ', 'Xiaozhi · ') + GX.chLabel(n), plain: true });
+    const qt = quoteOf(text);
+    if (m) return open({ text: m[1], ref: GX.chLabel(n), note: qt || excerpt(text, EN ? 320 : 140) });
+    return open({ text: qt || excerpt(text, EN ? 300 : 120), ref: T('小智 · ', 'Xiaozhi · ') + GX.chLabel(n), plain: true });
   }
 
   const CSS = `
@@ -4185,6 +4548,10 @@ function mx_strBytes(s){const a=new Uint8Array(s.length);for(let i=0;i<s.length;
 .recdot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#D23B3B;margin-right:6px;animation:gxblink 1s infinite}
 @keyframes gxblink{50%{opacity:.25}}
 .gxwork video,.gxwork audio{margin-top:4px}
+.gxstrip{display:flex;gap:8px;overflow-x:auto;padding:8px 0 4px;-webkit-overflow-scrolling:touch}
+.gxstrip .gxcell{flex:0 0 76px}
+.gxstrip .gxcell img{aspect-ratio:9/16}
+.pxdel{position:absolute;right:4px;top:4px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;text-align:center;line-height:24px;font-size:16px}
 `;
   function css() {
     if (document.getElementById('gxscss')) return;
@@ -4201,11 +4568,11 @@ function mx_strBytes(s){const a=new Uint8Array(s.length);for(let i=0;i<s.length;
     isOpen: () => !!(EL && EL.classList.contains('on')),
     recording: recOn,
     _st: st, _draw: (w, h) => { const c = document.createElement('canvas'); drawCard(c, w, h); return c; },
-    _item: () => item, _setPhoto: (im, by) => { photo = im; photoBy = by || ''; paint(); }, _note: () => note
+    _item: () => item, _setPhoto: (im, by) => { setPhoto(im, by); paint(); }, _state: () => ({ photoMode, fullScale, fullKind, fullBless, origDX, origDY }), _note: () => note
   };
 })();
 
-var GX_VER = "1.1.202610130937";
+var GX_VER = "1.1.202610131005";
 </script>
 <script>/* ===== 321創世記講義 ===== */
 const D = JSON.parse(document.getElementById('DATA').textContent);
@@ -10412,10 +10779,12 @@ function xzSystem(){
     '',
     '【回答格式（回答會被朗讀出來）】',
     '1. 用自然、口語、可以順暢朗讀的文字。',
-    '2. 不要使用表格，不要用直線分隔欄位。',
-    '3. 不要使用 Markdown：不用井號標題、不用星號粗體、不用大於號引言、不用條列符號。',
-    '4. 引用經文時把章節寫成可朗讀的形式，例如「羅馬書八章一節」。',
-    '5. 段落簡短，多用句號分句。',
+    '2. 排版要美觀好讀：用二到四個簡短的小標題（以「## 」開頭，每個不超過十二個字）把回答分成幾段，每段二到四句；很短的回答可以不用小標題。',
+    '3. 全篇最重要的那一句，用「> 」開頭單獨成一行標成引言（只標一句），這一句會被做成美圖。',
+    '4. 關鍵字詞可以用 **粗體** 標出（每段最多一兩處）；列舉步驟或要點時，用「- 」或「1. 」條列，每項一句。',
+    '5. 只有在對照、比較時才用 markdown 表格（最多三欄）；不要用 ASCII 圖案、程式碼區塊、表情符號或唸不出來的裝飾符號。',
+    '6. 引用經文時把章節寫成可朗讀的形式，例如「羅馬書八章一節」。',
+    '7. 段落簡短，多用句號分句。',
     '',
     '【安全】',
     '只在信仰、聖經、屬靈成長、品格與生活應用、為人禱告、鼓勵造就的範圍內服事。',
