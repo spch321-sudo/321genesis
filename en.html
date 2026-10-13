@@ -4622,7 +4622,7 @@ function mx_strBytes(s){const a=new Uint8Array(s.length);for(let i=0;i<s.length;
   };
 })();
 
-var GX_VER = "1.1.202610131024";
+var GX_VER = "1.2.202610140711";
 </script>
 <script>/* ===== 321 Genesis Study Notes ===== */
 const D = JSON.parse(document.getElementById('DATA').textContent);
@@ -6517,7 +6517,7 @@ function vMe(){
     <p class="sm muted" style="margin:0 0 10px">Currently: ${ {read:'I read on my own', group:'I lead a group', preach:'I preach'}[st.role] || 'Not set' }</p>
     <button class="btn" onclick="S.set.role='';save();render()">Choose again</button></div>
   <div class="card"><p class="eyebrow">About</p>
-    <p class="sm" style="margin:0 0 8px"><b>321 Genesis Study Notes</b>　v1.1</p>
+    <p class="sm" style="margin:0 0 8px"><b>321 Genesis Study Notes</b>　v1.2</p>
     <p class="sm muted" style="margin:0 0 8px">The lesson content is drawn from 321 Genesis: Exegesis and Sermonsfifty chapters. Scripture quotations are from the World English Bible.</p>
     <p class="sm" style="margin:0;font-family:var(--serif)">If one day you see light in the Bible that differs from this lesson, <b>follow the Bible, not us.</b></p></div>
   <div class="foot">Kingdom 321 Online Fellowship<br>To the only wise God, through Jesus Christ, be the glory forever. Amen.</div>`;
@@ -11410,6 +11410,484 @@ UI321.booted();
 UI321.bootGuard(8000);
 
 try { GX.boot(); } catch (e) { try { console.error("GX boot", e); } catch (_) {} }
+
+/* ═══ 創世記（MK321 核心模組）接上畫線範圍：先把 MK321 的動作借成全域名字 ═══ */
+window.mkText = MK321.text; window.mkSheet = MK321.sheet; window.mkTap = MK321.tap;
+window.mkSetColor = MK321.setColor;
+
+/* ═══════════════════════════════════════════════════════════════════
+   畫線範圍（照《321互動聖經》）：往前加一句、往後加一句／少一句、整節、整段
+   一條畫線仍只記在第一句的 key 上，S.mk[k].sp = 這條畫線共幾句。
+   ═══════════════════════════════════════════════════════════════════ */
+(function () {
+  /* 較早一代的範本（羅馬書、馬可、啟示錄）沒有顏色與定位工具，這裡補上 */
+  if (typeof window.mkColor !== 'function') window.mkColor = k => (S.mk[k] && S.mk[k].c) || '';
+  if (typeof window.mkKeep !== 'function') window.mkKeep = (k, fn) => {
+    const sel = '[data-k="' + k + '"]', b = document.querySelector(sel), top = b ? b.getBoundingClientRect().top : null;
+    fn(); if (top === null) return;
+    const a = document.querySelector(sel); if (a) { const d = a.getBoundingClientRect().top - top; if (Math.abs(d) > 1) window.scrollBy(0, d); }
+  };
+  const TT = (zh, en) => (window.GX && GX.T) ? GX.T(zh, en) : zh;
+  const MKS_TEXT = window.mkText, MKS_SHEET = window.mkSheet, MKS_TAP = window.mkTap;
+  const sp = k => Math.max(1, +((S.mk[k] || {}).sp) || 1);
+  /* 經文：由資料攤平整章的句子（不靠畫面，哪裡打開都算得對） */
+  function seqV(c) {
+    const out = [];
+    (D.txt[c] || []).forEach((t, i) => {
+      const ss = splitHTML(esc(t)), n = ss.length, ref = c + ':' + (i + 1);
+      /* 空的節（和合本把兩節合成一節時，後一節是空的）不算一句 */
+      for (let s = 0; s < n; s++) if (String(ss[s]).replace(/<[^>]+>/g, '').trim())
+        out.push({ k: 'v|' + ref + (n > 1 ? '|' + s : ''), v: i + 1 });
+    });
+    return out;
+  }
+  /* 其他（講義、解經、三句話）：照畫面上的順序 */
+  const grp = p => p[0] === 'l' ? 'l|' + p[1] + '|' : p.slice(0, -1).join('|') + '|';
+  function seqDom(k) {
+    backfill();
+    const g = grp(k.split('|')), seen = {}, out = [];
+    document.querySelectorAll('.mks[data-k],.mkp[data-k]').forEach(e => {
+      const x = e.dataset.k;
+      if (x.indexOf(g) === 0 && !seen[x]) { seen[x] = 1; out.push({ k: x }); }
+    });
+    if (!seen[k]) out.unshift({ k });
+    return out;
+  }
+  function seq(k) {
+    const p = k.split('|');
+    return p[0] === 'v' ? seqV(p[1].split(':')[0]) : seqDom(k);
+  }
+  function keysOf(k) {
+    const L = seq(k), i = L.findIndex(x => x.k === k);
+    if (i < 0) return [k];
+    return L.slice(i, i + sp(k)).map(x => x.k);
+  }
+  /* 整節／整段要畫幾句 */
+  function spanTo(k, mode) {
+    const L = seq(k), i = L.findIndex(x => x.k === k), p = k.split('|');
+    if (i < 0) return 1;
+    let n = 1;
+    if (p[0] === 'v') {
+      const c = p[1].split(':')[0], v = L[i].v;
+      let z = v;
+      if (mode === 'p') { const b = VMAP[c + ':' + v]; z = b && b.z ? b.z : v; }
+      while (i + n < L.length && L[i + n].v <= z) n++;
+    } else {
+      const pre = p[0] === 'l' ? p.slice(0, 4).join('|') + '|' : grp(p);
+      while (i + n < L.length && L[i + n].k.indexOf(pre) === 0) n++;
+    }
+    return n;
+  }
+  /* 出處：經文算出「出埃及記 1:6-7」；其他交給美圖自己去查 */
+  function refOf(k) {
+    const p = k.split('|');
+    if (p[0] !== 'v') return GX.chLabel(+String(p[1] || '').split(':')[0] || R.ch || S.last || 1);
+    const ks = keysOf(k), a = ks[0].split('|')[1].split(':'), z = ks[ks.length - 1].split('|')[1].split(':');
+    return (GX.BK ? TT(GX.BK.zh, GX.BK.en) : (GX.BOOK || '')) + ' ' + a[0] + ':' + a[1] + (z[1] !== a[1] ? '-' + z[1] : '');
+  }
+  window.mkText = function (k) {
+    if (!S.mk[k] || sp(k) < 2) return MKS_TEXT(k);
+    /* 中文直接接；英文（前後都是英數標點）中間補一個空格 */
+    return keysOf(k).map(x => String(MKS_TEXT(x) || '').trim()).filter(Boolean).reduce((s, x) =>
+      !s ? x : (/[\x21-\x7E”’]$/.test(s) && /^[\x21-\x7E“‘]/.test(x)) || k[0] !== 'v' ? s + ' ' + x : s + x, '');
+  };
+  /* 把多句畫線延伸到後面幾句（只改畫面，不另外存） */
+  /* 較早的範本句子沒有 data-k，只把 key 寫在 onclick 裡：補上 */
+  function backfill() {
+    document.querySelectorAll('.mks:not([data-k]),.mkp:not([data-k])').forEach(e => {
+      const mm = /mkTap\('([^']+)'/.exec(e.getAttribute('onclick') || '');
+      if (mm) e.setAttribute('data-k', mm[1]);
+    });
+  }
+  function paint() {
+    backfill();
+    document.querySelectorAll('[data-own]').forEach(e => {
+      if (!mkHas(e.dataset.own) && !mkHas(e.dataset.k)) { e.classList.remove('hl'); e.removeAttribute('data-c'); }
+      e.removeAttribute('data-own');
+    });
+    Object.keys(S.mk).forEach(k => {
+      if (sp(k) < 2) return;
+      const c = mkColor(k);
+      keysOf(k).slice(1).forEach(x => document.querySelectorAll('[data-k="' + x + '"]').forEach(e => {
+        if (mkHas(x)) return;
+        e.classList.add('hl'); e.dataset.own = k;
+        if (c) e.setAttribute('data-c', c); else e.removeAttribute('data-c');
+      }));
+    });
+  }
+  window.mkPaintSpans = paint;
+  const R0 = window.render;
+  window.render = function () { const r = R0.apply(this, arguments); try { paint(); } catch (e) {} return r; };
+  /* 點到被別條畫線蓋住的句子，就打開那一條 */
+  window.mkTap = function (k, el) {
+    const own = el && el.dataset && el.dataset.own;
+    if (own && mkHas(own) && !mkHas(k)) return window.mkSheet(own);
+    if (mkHas(k)) return window.mkSheet(k);
+    return MKS_TAP(k, el);
+  };
+  const SC0 = window.mkSetColor;
+  if (typeof SC0 === 'function') window.mkSetColor = function (k, c) { SC0(k, c); try { paint(); } catch (e) {} };
+  /* 儲存領受時保留範圍 */
+  window.mkSave = function (k) {
+    const v = ($('#mkin') || {}).value || '';
+    const o = S.mk[k] || {};
+    S.mk[k] = { n: v.trim(), at: Date.now(), c: mkColor(k) };
+    if (o.sp > 1) S.mk[k].sp = o.sp;
+    save();
+    $('#sheet').classList.remove('on'); mkKeep(k, render); toast(TT('領受已存', 'Saved'));
+  };
+  if (window.GXS) {
+    window.mkSpanCard = function (k) {
+      const n = ($('#mkin') || {}).value || mkNote(k), sh = $('#sheet');
+      if (sh) sh.classList.remove('on');
+      GXS.open({ text: window.mkText(k), note: n, ref: refOf(k) });
+    };
+    if (typeof window.mkCard !== 'function') window.mkCard = window.mkSpanCard;
+  } else if (typeof window.mkRef === 'function') {
+    /* 自帶美圖的範本（路加福音）：沿用它自己的「做一張圖」，只把出處改成範圍 */
+    const REF0 = window.mkRef;
+    window.mkRef = function (k) {
+      const r = REF0(k);
+      if (k[0] !== 'v' || sp(k) < 2) return r;
+      const ks = keysOf(k), a = ks[0].split('|')[1].split(':'), z = ks[ks.length - 1].split('|')[1].split(':');
+      return r.replace(/\s\S+$/, ' ' + a[0] + ':' + a[1] + (z[1] !== a[1] ? '-' + z[1] : ''));
+    };
+  }
+  function rowHTML(k) {
+    const isV = k[0] === 'v';
+    return `<div class="hlrow mkspan"><span class="lb">${TT('範圍', 'Range')}</span>
+      <button class="spb" data-sp="back" title="${TT('往前加一句', 'Add the sentence before')}">${TT('↑前一句', '↑ Prev')}</button>
+      <button class="spb" data-sp="-1">－</button>
+      <span class="spn" id="mkSpn">${TT(sp(k) + ' 句', sp(k) + '')}</span>
+      <button class="spb" data-sp="1">＋</button>
+      ${isV ? '<button class="spb" data-sp="v">' + TT('整節', 'Verse') + '</button>' : ''}
+      <button class="spb" data-sp="p" title="${isV ? TT('這一段解經涵蓋的經文', 'The verses this exegesis covers') : TT('這一段', 'This paragraph')}">${TT('整段', 'Passage')}</button></div>
+      <div class="mkspan-hint">${TT('按 ＋ 往下多畫一句、按「↑前一句」往上加一句，畫線就不只一句，可以連成一整段。' + (isV ? '「整段」是這段解經涵蓋的經文。' : ''), 'Tap ＋ to add the next sentence or “↑ Prev” to add the one before, so one highlight can cover a whole passage.' + (isV ? ' “Passage” covers the verses of this exegesis section.' : ''))}</div>`;
+  }
+  window.mkSheet = function (k) {
+    MKS_SHEET(k);
+    const box = $('#sheet'); if (!box) return;
+    const row = box.querySelector('.hlrow') || box.querySelector('.mkq');
+    if (row && !box.querySelector('.mkspan')) row.insertAdjacentHTML('afterend', rowHTML(k));
+    const q0 = box.querySelector('#mkq') || box.querySelector('.mkq');
+    if (q0 && sp(k) > 1) q0.textContent = window.mkText(k).slice(0, 300);
+    box.querySelectorAll('button').forEach(b => {
+      if (window.GXS && /做成美[圖图]/.test(b.textContent)) b.onclick = e => { e.stopPropagation(); window.mkSpanCard(k); };
+    });
+    box.querySelectorAll('[data-sp]').forEach(b => b.onclick = e => { e.stopPropagation(); spanAct(k, b.dataset.sp); });
+  };
+  function refresh(k, ta) {
+    const box = $('#sheet');
+    const q = box && (box.querySelector('#mkq') || box.querySelector('.mkq')); if (q) q.textContent = window.mkText(k).slice(0, 300);
+    const n = box && box.querySelector('#mkSpn'); if (n) n.textContent = TT(sp(k) + ' 句', sp(k) + '');
+    mkKeep(k, render);
+    if (ta != null) { const t = $('#mkin'); if (t) t.value = ta; }
+  }
+  function spanAct(k, a) {
+    if (!mkHas(k)) return;
+    const ta = ($('#mkin') || {}).value;
+    const m = S.mk[k], was = sp(k), L = seq(k), i = L.findIndex(x => x.k === k);
+    if (a === 'back') {
+      if (i <= 0) return toast(TT('前面沒有句子了', 'Nothing before this'));
+      const pk = L[i - 1].k;
+      if (mkHas(pk)) return toast(TT('前一句已經畫了線', 'The sentence before is already highlighted'));
+      const own = document.querySelector('[data-k="' + pk + '"][data-own]');
+      if (own) return toast(TT('前一句屬於另一條畫線', 'The sentence before belongs to another highlight'));
+      if (ta != null) m.n = ta.trim();
+      S.mk[pk] = Object.assign({}, m, { sp: was + 1, at: Date.now() });
+      delete S.mk[k]; save();
+      mkKeep(pk, render);
+      window.mkSheet(pk);
+      const t = $('#mkin'); if (t) { t.value = S.mk[pk].n || ''; setTimeout(() => { try { t.blur(); } catch (e) {} }, 80); }
+      toast(TT('已往前加一句，共 ' + (was + 1) + ' 句', 'Added — ' + (was + 1) + ' sentences'));
+      return;
+    }
+    let n;
+    if (a === 'v' || a === 'p') {
+      n = spanTo(k, a);
+      toast(n === was ? (a === 'v' ? TT('這一節已經整節畫起來了', 'The whole verse is already highlighted') : TT('這一段已經整段畫起來了', 'The whole passage is already highlighted'))
+                      : (a === 'v' ? TT('已畫整節，共 ' + n + ' 句', 'Whole verse — ' + n + ' sentences') : TT('已畫整段，共 ' + n + ' 句', 'Whole passage — ' + n + ' sentences')));
+    } else {
+      n = was + (+a);
+      if (n < 1) return toast(TT('至少要畫一句', 'At least one sentence'));
+      if (i >= 0 && i + n > L.length) return toast(TT('後面沒有句子了', 'Nothing after this'));
+    }
+    if (n > 1) m.sp = n; else delete m.sp;
+    save(); refresh(k, ta);
+  }
+  const st = document.createElement('style');
+  st.textContent = `.mkspan{display:flex;align-items:center;margin:10px 0 12px;gap:6px!important;flex-wrap:wrap!important}
+.mkspan .lb{font-size:12.5px;color:var(--dusk);white-space:nowrap}
+.mkspan .spb{min-width:34px;height:36px;padding:0 8px;flex:0 0 auto;border:1px solid var(--line);border-radius:11px;background:var(--card);color:var(--ink);font-size:14.5px;font-family:inherit;white-space:nowrap;cursor:pointer}
+.mkspan .spb:active{background:var(--line)}
+.mkspan .spn{min-width:34px;white-space:nowrap;text-align:center;font-size:14.5px;color:var(--ink)}
+.mkspan-hint{font-size:12.5px;line-height:1.6;color:var(--dusk);background:color-mix(in srgb,var(--brass,#B8862F) 12%,transparent);border-radius:10px;padding:8px 11px;margin:-4px 0 12px}`;
+  document.head.appendChild(st);
+  try { paint(); } catch (e) {}
+})();
+/* 再把包好的版本裝回 MK321：畫面上 onclick="MK321.xxx(...)" 都會走到新的 */
+(function () {
+  MK321.text = window.mkText; MK321.sheet = window.mkSheet; MK321.tap = window.mkTap;
+  MK321.setColor = window.mkSetColor; MK321.save = window.mkSave;
+  MK321.cardOn = function (k) { window.mkSpanCard(k); };
+  MK321.askOn = function (k, live) {
+    let n = mkNote(k);
+    if (live) { const i = document.getElementById('mkin'); if (i) n = i.value || ''; }
+    const sh = document.getElementById('sheet'); if (sh) sh.classList.remove('on');
+    askXz(window.mkText(k), n ? GX.T('領受', 'Note') + '：' + n : '');
+  };
+  try { mkPaintSpans(); } catch (e) {}
+})();
+
+/* ═══════════════════════════════════════════════════════════════════
+   朗讀標示一句一句走（照《321互動聖經》）
+   朗讀引擎一次把一整段（好幾句）標成 .spk-now，聲音也是整段連著唸；
+   這裡只留「正在唸的那一句」亮著，依音檔播放進度（按字數比例）往下移。
+   用裝置內建語音（沒有音檔）時，依語速估算。
+   ═══════════════════════════════════════════════════════════════════ */
+(function () {
+  if (window.__spkStep) return; window.__spkStep = 1;
+  let lastAudio = null;
+  try {
+    const P0 = HTMLMediaElement.prototype.play;
+    HTMLMediaElement.prototype.play = function () {
+      if (this.tagName === 'AUDIO' || !this.videoWidth) lastAudio = this;
+      return P0.apply(this, arguments);
+    };
+  } catch (e) {}
+  let G = null;            // { els, w[], tot, cur, t0, a, src }
+  let hold = 0;
+  ['wheel', 'touchstart', 'touchmove', 'pointerdown'].forEach(ev =>
+    window.addEventListener(ev, () => { hold = Date.now() + 6000; }, { passive: true }));
+  const len = el => Math.max(1, String(el.textContent || '').replace(/\s+/g, '').length);
+  function show(i) {
+    if (!G) return;
+    i = Math.max(0, Math.min(G.els.length - 1, i));
+    if (i === G.cur) return;
+    G.els.forEach((e, j) => { if (j !== i) e.classList.remove('spk-now'); });
+    const el = G.els[i]; el.classList.add('spk-now'); G.cur = i;
+    if (Date.now() < hold) return;
+    try {
+      const r = el.getBoundingClientRect();
+      if (r.top < 70 || r.bottom > innerHeight - 150) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (e) {}
+  }
+  function frac() {
+    const a = G.a;
+    if (a && a.duration && isFinite(a.duration) && a.duration > 0 && (a.currentSrc || a.src) === G.src)
+      return a.currentTime / a.duration;
+    /* 裝置語音：依語速估算（中文約每秒 4.6 字，英文約每秒 14 個字母） */
+    const ss = window.speechSynthesis;
+    if (ss && ss.paused) { G.t0 += 250; return null; }
+    const en = /[A-Za-z]{3}/.test(G.els[0].textContent || '');
+    const cps = en ? 14 : 4.6;
+    return ((Date.now() - G.t0) / 1000 * cps) / G.tot;
+  }
+  function tick() {
+    if (document.hidden) return;
+    const now = Array.prototype.slice.call(document.querySelectorAll('.spk-now'));
+    if (G) {
+      const mine = G.els[G.cur];
+      /* 引擎換了下一段（或重繪）：舊的那一組結束 */
+      const sameGroup = now.length === 1 && now[0] === mine;
+      if (!sameGroup) G = null;
+    }
+    if (!G && now.length > 1) {
+      const a = lastAudio && !lastAudio.paused ? lastAudio : null;
+      const w = now.map(len);
+      G = { els: now, w, tot: w.reduce((x, y) => x + y, 0), cur: -1, t0: Date.now(), a, src: a ? (a.currentSrc || a.src) : '' };
+      if (!a && lastAudio && lastAudio.paused && lastAudio.currentTime > 0) { G.a = lastAudio; G.src = lastAudio.currentSrc || lastAudio.src; }
+      show(0);
+    }
+    if (!G) return;
+    if (!G.a && lastAudio && !lastAudio.paused) { G.a = lastAudio; G.src = lastAudio.currentSrc || lastAudio.src; }
+    const f = frac();
+    if (f == null) return;
+    let acc = 0, i = 0;
+    const target = Math.min(0.999, Math.max(0, f)) * G.tot;
+    for (; i < G.w.length; i++) { acc += G.w[i]; if (acc > target) break; }
+    if (i > G.cur) show(i);             // 只往前走，不倒退閃動
+  }
+  setInterval(tick, 200);
+  /* 引擎一標上新的一段就立刻處理，不等下一次計時——不然換段那一瞬間會閃一下整段 */
+  let queued = false;
+  try {
+    new MutationObserver(ms => {
+      if (queued) return;
+      for (const m of ms) if (m.attributeName === 'class' && m.target.classList && m.target.classList.contains('spk-now')) {
+        queued = true; Promise.resolve().then(() => { queued = false; tick(); }); return;
+      }
+    }).observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'] });
+  } catch (e) {}
+})();
+
+/* ═══════════════════════════════════════════════════════════════════
+   PRON321 · 真人朗讀發音修正（依技能 321-reading-pronunciation）
+   只改「送去語音的文字」，畫面、分享、美圖的字一個都不動。
+   · SHARED：兩版共用的指定讀音（繁、简兩種寫法都列）
+   · TW：臺灣版（繁體介面）卻用了大陸口音語音（zh-CN）時才套
+   · CN：大陸版（简体介面）卻用了臺灣口音語音（zh-TW）時才套
+   規則一律帶上下文、長詞先；每條替代字只有一個讀音，套兩次也不會變（可重複套用）。
+   ═══════════════════════════════════════════════════════════════════ */
+var PRON321 = (function () {
+  'use strict';
+  var NUM = '[〇零一二三四五六七八九十百千萬万兩两幾几]+';
+  var UNIT = '(?:肘|尺|丈|寸|虎口|竿|掌|里|步)';
+  function R(s) { return new RegExp(s, 'g'); }
+  /* [pattern, 替代] —— 繁、简各一條（同形的只寫一次） */
+  var SHARED = [
+    /* 重 chóng／zhòng */
+    [R('重生'), '蟲生'], [R('重新'), '蟲新'], [R('重建'), '蟲建'],
+    [R('重擔'), '眾擔'], [R('重担'), '众担'],
+    /* 長 zhǎng：職稱、成長；長＋數字＋度量衡 cháng */
+    [R('長(?=' + NUM + UNIT + ')'), '常'], [R('长(?=' + NUM + UNIT + ')'), '常'],
+    [R('長(老|子|大|進|輩|執)'), '掌$1'],
+    [R('长(老|子|大|进|辈|执)'), '掌$1'],
+    [R('(成|生|年|家|族|官|兄|師|师|首|牧|夫|組|组|團|团|校|部|區|区|社)(長|长)(?![久遠远存期])'), '$1掌'],
+    /* 差 chāi */
+    [R('差(遣|派|役)'), '拆$1'],
+    [R('([主神祂他我])差(?=[人你我他門门使])'), '$1拆'],
+    /* 得著 dé zhuó */
+    [R('得[著着](?![急涼凉迷火慌])'), '得酌'],
+    /* 為 wèi：為主而活、為人禱告…（「成為」「以…為主」不在這些組合裡） */
+    [R('(^|[^成作行認认稱称以視视])([為为])(?=(?:主|神|祂|基督|耶穌|耶稣)(?:而活|而死|作工|做工|擺上|摆上|受苦|犧牲|牺牲|捨命|舍命|捨己|舍己|發熱心|发热心))'), '$1衛'],
+    [R('([為为])(?=(?:人|別人|别人|眾人|众人|你|你們|你们|我們|我们|他們|他们|弟兄姊妹)(?:禱告|祷告|代禱|代祷|代求|捨命|舍命))'), '衛'],
+    /* 給 jǐ */
+    [R('(供|補|补)[給给]'), '$1己'], [R('[給给]予'), '己予'],
+    /* 應 yìng／yīng */
+    [R('應許'), '映許'], [R('应许'), '映许'], [R('應驗'), '映驗'], [R('应验'), '映验'],
+    [R('應當'), '英當'], [R('应当'), '英当'],
+    /* 傳 chuán／zhuàn */
+    [R('傳道'), '船道'], [R('传道'), '船道'],
+    [R('(行|自)傳'), '$1賺'], [R('(行|自)传'), '$1赚'], [R('傳記'), '賺記'], [R('传记'), '赚记'],
+    /* 專名與聖經特殊詞 */
+    [R('沒藥'), '莫藥'], [R('没药'), '莫药'],
+    [R('嗎哪'), '馬哪'], [R('吗哪'), '马哪'],
+    [R('撒種'), '撒腫'], [R('撒种'), '撒肿'],
+    [R('撒但'), '仨但'],
+    [R('數一數'), '鼠一鼠'], [R('数一数'), '鼠一鼠'],
+    [R('數(點|算)'), '鼠$1'], [R('数(点|算)'), '鼠$1'],
+    [R('參孫'), '餐孫'], [R('参孙'), '餐孙'],
+    [R('阿們'), '阿門'], [R('阿们'), '阿门'],
+    [R('冠冕'), '官冕'],
+    [R('朝(見|拜)'), '潮$1'], [R('朝(见|拜)'), '潮$1'],
+    [R('背(起|負|负)'), '揹$1'],
+    [R('看守'), '刊守'],
+    [R('說客'), '稅客'], [R('说客'), '税客'],
+    [R('年少'), '年紹'], [R('(^|[^多不減减缺很太至最])少年'), '$1紹年'],
+    [R('盛(滿|满)'), '成$1'],
+    [R('([一兩两三那這这])宿(?![舍])'), '$1朽'],
+    [R('乾(?!坤)'), '甘'],
+    [R('鴿'), '哥']
+  ];
+  /* 臺灣國語（繁體介面＋大陸口音語音） */
+  var TW = [
+    [R('[說说]服'), '稅服'], [R('[遊游][說说]'), '遊稅'],
+    [R('期'), '奇'], [R('企'), '器'],
+    [R('[危微]'), '圍'], [R('寂'), '疾'],
+    [R('(^|[^人])[質质]'), '$1直'],
+    [R('[暫暂]'), '站'], [R('[攜携]'), '西'], [R('曝'), '瀑'],
+    [R('垃圾'), '樂色'], [R('[蝸蜗]'), '瓜'],
+    [R('[結结]果子'), '節果子']
+  ];
+  /* 普通話（简体介面＋臺灣口音語音）——講義 App 在简体模式送出的可能仍是繁體原文，所以兩種字形都要認 */
+  var CN = [
+    [R('期'), '七'], [R('企'), '起'],
+    [R('[危微]'), '威'], [R('寂'), '寄'],
+    [R('(^|[^人])[质質]'), '$1至'],
+    [R('[暂暫]'), '赞'], [R('[携攜]'), '鞋'], [R('曝光'), '爆光'],
+    [R('垃圾'), '拉鸡'], [R('[蜗蝸]'), '窝']
+  ];
+  function run(list, s) {
+    for (var i = 0; i < list.length; i++) s = s.replace(list[i][0], list[i][1]);
+    return s;
+  }
+  /* std：'tw'（臺灣國語）或 'cn'（普通話）；voice：語音名稱（zh-TW-… / zh-CN-…）或語系 */
+  function fix(s, std, voice) {
+    s = String(s == null ? '' : s);
+    if (!/[㐀-鿿]/.test(s)) return s;            // 英文不動
+    s = run(SHARED, s);
+    var v = String(voice || '');
+    var vTW = /zh[-_]TW|zh[-_]HK/i.test(v), vCN = /zh[-_]CN|cmn/i.test(v);
+    if (std === 'tw' && vCN) s = run(TW, s);
+    else if (std === 'cn' && vTW) s = run(CN, s);
+    return s;
+  }
+  /* 裝置內建語音（speechSynthesis）也走同一套 */
+  var stdNow = function () { return 'tw'; };
+  function hookNative(getStd) {
+    if (getStd) stdNow = getStd;
+    try {
+      var ss = window.speechSynthesis;
+      if (!ss || ss.__pron) return;
+      var sp = ss.speak.bind(ss);
+      ss.speak = function (u) {
+        try { if (u && u.text) u.text = fix(u.text, stdNow(), u.lang || ''); } catch (e) {}
+        return sp(u);
+      };
+      ss.__pron = 1;
+    } catch (e) {}
+  }
+  /* 只做兩岸差異那一段（給已經自己套過共用規則的引擎用，例如創世記的 TTS321） */
+  function fixDiff(s, std, voice) {
+    s = String(s == null ? '' : s);
+    var v = String(voice || '');
+    if (std === 'tw' && /zh[-_]CN|cmn/i.test(v)) return run(TW, s);
+    if (std === 'cn' && /zh[-_]TW|zh[-_]HK/i.test(v)) return run(CN, s);
+    return s;
+  }
+  return { fix: fix, fixDiff: fixDiff, hookNative: hookNative, SHARED: SHARED, TW: TW, CN: CN };
+})();
+/* PRON321 接上創世記（TTS321 核心）：把規則放在 TTS_SAY 最前面（核心會自動產生简体那一套）。
+   兩岸差異那一段依「目前介面＋目前語音」決定，開始朗讀前重新對一次；音檔快取的 key 也跟著變。 */
+(function () {
+  if (typeof TTS_SAY === 'undefined' || !window.TTS321 || !TTS321.rebuildSay) return;
+  const std = () => { try { return (S.set && S.set.sc) ? 'cn' : 'tw'; } catch (e) { return 'tw'; } };
+  const vname = () => { try { const v = TTS_VOICES[S.set.voice] || TTS_VOICES.yunfan || TTS_VOICES[Object.keys(TTS_VOICES)[0]]; return v.name; } catch (e) { return ''; } };
+  let ins = 0, sig = '';
+  function sync() {
+    const s = std(), v = vname(), d = (s === 'tw' && /zh[-_]CN/i.test(v)) ? PRON321.TW : (s === 'cn' && /zh[-_]TW/i.test(v)) ? PRON321.CN : [];
+    const k = s + '|' + (d === PRON321.TW ? 'TW' : d === PRON321.CN ? 'CN' : '');
+    if (k === sig) return;
+    TTS_SAY.splice.apply(TTS_SAY, [0, ins].concat(PRON321.SHARED, d));
+    ins = PRON321.SHARED.length + d.length; sig = k;
+    try { TTS321.rebuildSay(); } catch (e) {}
+  }
+  sync();
+  ['play', 'playFrom', 'speak', 'say', 'resumePlay'].forEach(n => {
+    const f = TTS321[n];
+    if (typeof f === 'function') TTS321[n] = function () { try { sync(); } catch (e) {} return f.apply(this, arguments); };
+  });
+  PRON321.hookNative(std);
+})();
+/* 預設語音：繁體介面用臺灣口音（雲哲），简体介面用大陸口音（雲帆）。
+   使用者自己在設定裡選過語音（S.set.voicePicked）就照他的選擇；選了曉辰的人不受影響。 */
+(function () {
+  if (typeof S === 'undefined' || !S.set || typeof TTS_VOICES === 'undefined') return;
+  function apply() {
+    try {
+      if (S.set.voicePicked) return;
+      const want = S.set.sc ? 'yunfan' : 'yunjhe';
+      if (!TTS_VOICES[want]) return;
+      if (S.set.voice !== want && (!S.set.voice || S.set.voice === 'yunfan' || S.set.voice === 'yunjhe')) S.set.voice = want;
+    } catch (e) {}
+  }
+  apply(); try { save(); } catch (e) {}
+  if (typeof pickVoice === 'function') {
+    const P0 = pickVoice;
+    window.pickVoice = function (k) { try { S.set.voicePicked = 1; } catch (e) {} return P0.apply(this, arguments); };
+  }
+  if (typeof ttsFetch === 'function') {
+    const F0 = ttsFetch;
+    window.ttsFetch = function (p) { apply(); return F0(p); };
+  }
+  if (window.TTS321) ['play', 'playFrom', 'speak', 'say', 'resumePlay'].forEach(n => {
+    const f = TTS321[n];
+    if (typeof f === 'function') TTS321[n] = function () { apply(); return f.apply(this, arguments); };
+  });
+  const R0 = window.render;
+  if (typeof R0 === 'function') window.render = function () { apply(); return R0.apply(this, arguments); };
+})();
 </script>
 </body>
 </html>
