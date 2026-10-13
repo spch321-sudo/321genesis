@@ -3265,7 +3265,10 @@ var GXS = (function () {
       say(T('已選好這張相片', 'Photo selected'));
     } catch (e) {
       try { const im = await loadImg(url, true); setPhoto(im, by || ''); paint(); }
-      catch (e2) { say(T('這張相片載入失敗，請換一張', 'Could not load this photo — try another')); }
+      catch (e2) {
+        if (url.indexOf(SITE) === 0 && url.indexOf(SITE + 'bg/') !== 0) return setPhotoURL(SITE + 'bg/' + url.slice(SITE.length), by);
+        say(T('這張相片載入失敗，請換一張', 'Could not load this photo — try another'));
+      }
     }
   }
   function pickOwn() {
@@ -3460,7 +3463,7 @@ var GXS = (function () {
     const draw = () => {
       const cat = bgList.cats.some(c => c.id === st().bgCat) ? st().bgCat : (bgList.cats[0] || {}).id;
       b.innerHTML = `<div class="gxchips">${bgList.cats.map(c => `<button class="${c.id === cat ? 'on' : ''}" data-c="${esc(c.id)}">${esc(bgName(c))}</button>`).join('')}</div>
-        <div class="gxgrid">${bgList.list.map((x, i) => x.c !== cat ? '' : `<button class="gxcell" data-i="${i}"><img src="${SITE + esc(x.t || x.f)}" alt="" loading="lazy"><span>${esc(bgName(x))}</span></button>`).join('')}</div>
+        <div class="gxgrid">${bgList.list.map((x, i) => x.c !== cat ? '' : `<button class="gxcell" data-i="${i}"><img src="${SITE + esc(x.t || x.f)}" alt="" loading="lazy" data-alt="${esc(x.t && x.t !== x.f ? SITE + x.f + '|' : '')}${SITE}bg/${esc(x.t || x.f)}" onerror="GXS.thumbErr(this)"><span>${esc(bgName(x))}</span></button>`).join('')}</div>
         <p class="xs muted">${esc(T('圖片與《321互動聖經》共用同一個圖庫。', 'Shared with the 321 Interactive Bible gallery.'))}</p>`;
       qa('[data-c]', b).forEach(x => x.onclick = () => { st().bgCat = x.getAttribute('data-c'); keep(); draw(); });
       qa('.gxcell', b).forEach(x => x.onclick = async () => {
@@ -4248,7 +4251,7 @@ function mx_strBytes(s){const a=new Uint8Array(s.length);for(let i=0;i<s.length;
     try { await bgLoad(); } catch (e) { strip.innerHTML = `<span class="xs muted">${esc(T('圖庫連不上，請稍後再試', 'Could not reach the gallery'))}</span>`; return; }
     const cat = bgList.cats.some(c => c.id === st().bgCat) ? st().bgCat : (bgList.cats[0] || {}).id;
     cats.innerHTML = bgList.cats.map(c => `<button class="${c.id === cat ? 'on' : ''}" data-k="bgcat" data-v="${esc(c.id)}">${esc(bgName(c))}</button>`).join('');
-    strip.innerHTML = bgList.list.map((x, i) => x.c !== cat ? '' : `<button class="gxcell" data-k="bgpick" data-v="${i}" title="${esc(bgName(x))}"><img src="${SITE + esc(x.t || x.f)}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${SITE + esc(x.f)}'"><span>${esc(bgName(x))}</span></button>`).join('');
+    strip.innerHTML = bgList.list.map((x, i) => x.c !== cat ? '' : `<button class="gxcell" data-k="bgpick" data-v="${i}" title="${esc(bgName(x))}"><img src="${SITE + esc(x.t || x.f)}" alt="" loading="lazy" data-alt="${esc(x.t && x.t !== x.f ? SITE + x.f + '|' : '')}${SITE}bg/${esc(x.t || x.f)}" onerror="GXS.thumbErr(this)"><span>${esc(bgName(x))}</span></button>`).join('');
   }
   async function openPhotoLib() {
     const b = sub(T('📚 我的相片庫', '📚 My photos'), `<p class="xs muted">${esc(T('從相簿或圖庫選過的相片都會自動留在這裡（存在這支手機上，最多 40 張）。點一張就用；右上 × 是移出相片庫。', 'Photos you used are kept here on this phone (up to 40). Tap to use; × removes it.'))}</p><div class="gxgrid" id="plGrid"></div>`);
@@ -4454,12 +4457,48 @@ function mx_strBytes(s){const a=new Uint8Array(s.length);for(let i=0;i<s.length;
     }
     saveImg();
   }
+  /* 找出這段經文在創世記哪一章哪一節（畫線問小智、整段畫線…出處沒有節號時用） */
+  const PUN = /[\s，。、；：？！「」『』（）《》〈〉“”‘’—…·,.;:?!"'()\[\]\-–]/g;
+  function normV(x) {
+    let t = String(x || '');
+    if (EN) return t.toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (isSC() && typeof toSC === 'function') t = toSC(t);
+    return t.replace(PUN, '');
+  }
+  function findRef(text, hint) {
+    const q = normV(text);
+    if (q.length < 4 || !D || !D.txt) return null;
+    const head = q.slice(0, 30), tail = q.slice(-30);
+    const order = [];
+    if (hint >= 1 && hint <= 50) order.push(hint);
+    for (let c = 1; c <= 50; c++) if (c !== hint) order.push(c);
+    for (const c of order) {
+      const vs = D.txt[c] || [];
+      let joined = '', starts = [];
+      vs.forEach(v => { starts.push(joined.length); joined += normV(v); });
+      const i = joined.indexOf(head);
+      if (i < 0) continue;
+      let j = joined.indexOf(tail, i);
+      if (j < 0) j = i + head.length - 1; else j = j + tail.length - 1;
+      let a = 0, b = 0;
+      for (let k = 0; k < starts.length; k++) { if (starts[k] <= i) a = k; if (starts[k] <= j) b = k; }
+      return { ch: c, v: a + 1, v2: b + 1 };
+    }
+    return null;
+  }
+  const fmtRef = f => T(`創世記 ${f.ch}:${f.v}${f.v2 > f.v ? '-' + f.v2 : ''}`, `Genesis ${f.ch}:${f.v}${f.v2 > f.v ? '–' + f.v2 : ''}`);
   function open(o) {
     o = o || {};
     const text = String(o.text || o.t || '').replace(/<[^>]+>/g, '').replace(/[ \t]+/g, ' ').trim();
     if (!text) { say(T('沒有可以做圖的內容', 'Nothing to make a card from')); return false; }
     stopTTS();
-    item = { t: text, ref: o.ref || '', n0: String(o.note || o.n || '').trim(), plain: !!o.plain };
+    let ref = o.ref || '';
+    if (!o.plain && !/\d+\s*:\s*\d+/.test(ref)) {
+      const m = String(ref).match(/(\d+)/);
+      const f = findRef(text, m ? +m[1] : ((R && R.ch) || S.last || 0));
+      if (f) ref = fmtRef(f);
+    }
+    item = { t: text, ref, n0: String(o.note || o.n || '').trim(), plain: !!o.plain };
     note = item.n0;
     fullBless = ''; blessOwn = '';
     photoMode = st().photoMode || 'full';
@@ -4565,6 +4604,13 @@ function mx_strBytes(s){const a=new Uint8Array(s.length);for(let i=0;i<s.length;
   return {
     open, close, fromAnswer, after,
     workPlay, workShare, workDl, workDel,
+    thumbErr: img => {
+      const alt = String(img.getAttribute('data-alt') || '').split('|').filter(Boolean);
+      if (!alt.length) { const c = img.closest('.gxcell'); if (c) c.remove(); return; }
+      img.setAttribute('data-alt', alt.slice(1).join('|'));
+      img.src = alt[0];
+    },
+    _findRef: (t, h) => findRef(t, h),
     isOpen: () => !!(EL && EL.classList.contains('on')),
     recording: recOn,
     _st: st, _draw: (w, h) => { const c = document.createElement('canvas'); drawCard(c, w, h); return c; },
@@ -4572,7 +4618,7 @@ function mx_strBytes(s){const a=new Uint8Array(s.length);for(let i=0;i<s.length;
   };
 })();
 
-var GX_VER = "1.1.202610131005";
+var GX_VER = "1.1.202610131024";
 </script>
 <script>/* ===== 321創世記講義 ===== */
 const D = JSON.parse(document.getElementById('DATA').textContent);
