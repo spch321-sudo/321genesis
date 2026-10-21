@@ -12268,5 +12268,46 @@ var PRON321 = (function () {
 })();
 
 </script>
+<script id="GXFS">
+/* ═══ 小智全螢幕＋字級跟著內文（2026-10-21）═══
+   ① 小智面板佔滿整個畫面（原本是下方抽屜，上面還露出一截頁首）
+   ② 小智回答的字級＝內文字級（--fs），面板頂端多一顆「A」可直接調整，整個 App 一起變 */
+(function () {
+  if (window.__gxfs) return; window.__gxfs = 1;
+  var st = document.createElement('style');
+  st.textContent =
+    '#xz .xzcard{position:fixed!important;left:0!important;right:0!important;top:0!important;bottom:0!important;' +
+    'width:100%!important;max-width:none!important;height:100%!important;height:100dvh!important;max-height:none!important;' +
+    'margin:0!important;border-radius:0!important;padding-top:env(safe-area-inset-top);transform:none!important}' +
+    '#xz .xzm,#xz .xzhi,#xz .xzsv{font-size:var(--fs,17px)!important}' +
+    '#xz .xzm .xzt{font-size:1em!important}' +
+    '#xz .xzq button{font-size:calc(var(--fs,17px)*.9)!important}' +
+    '#xz .xzfs{font-family:var(--serif,serif);font-weight:700;min-width:40px}';
+  document.head.appendChild(st);
+  function bump() {
+    try {
+      if (typeof S !== 'undefined' && S.set) {
+        S.set.fs = ((S.set.fs | 0) + 1) % 5;
+        if (typeof save === 'function') save();
+        if (typeof applyFS === 'function') applyFS();
+        var en = /^en/i.test(document.documentElement.lang || '');
+        if (typeof toast === 'function') toast((en ? 'Text size ' : (/Hans/.test(document.documentElement.lang) ? '字级 ' : '字級 ')) + (S.set.fs + 1) + ' / 5');
+      } else { var b = document.getElementById('fsz'); if (b) b.click(); }
+    } catch (e) {}
+  }
+  function addBtn() {
+    var h = document.querySelector('#xz .xzh');
+    if (!h || h.querySelector('.xzfs')) return;
+    var b = document.createElement('button');
+    b.className = 'ico xzfs'; b.type = 'button'; b.textContent = 'A';
+    b.setAttribute('aria-label', /^en/i.test(document.documentElement.lang || '') ? 'Text size' : '字級');
+    b.onclick = function (e) { e.stopPropagation(); bump(); };
+    var first = h.querySelector('button');
+    if (first) h.insertBefore(b, first); else h.appendChild(b);
+  }
+  try { new MutationObserver(addBtn).observe(document.body, { childList: true, subtree: true }); } catch (e) {}
+  addBtn();
+})();
+</script>
 </body>
 </html>
