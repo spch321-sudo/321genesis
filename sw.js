@@ -4,7 +4,7 @@
    · 網頁、程式、資料：網路優先（cache:'no-cache'），離線才用快取
    · 圖片等其他同源資源：快取優先
    · 音訊、影片、帶 Range 的請求、以及跨網域（小智、語音、圖庫、詩歌庫）一律不攔 */
-const VER = '1.2.202610162200-tri10171929-gxa1019-gx1021c-vp1023-co1-gp1103-au1103-xz1103-xf1103-xm1103-vk1103-rf1105';
+const VER = '1.2.202610162200-tri10171929-gxa1019-gx1021c-vp1023-co1-gp1103-au1103-xz1103-xf1103-xm1103-vk1103-rf1105-pr1109';
 const CACHE = 'gn321-' + VER;
 const SHELL = ['./', './index.html', './sc.html', './en.html', './xz2.js', './coread.js', './peerjs.min.js'];
 
